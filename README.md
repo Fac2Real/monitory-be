@@ -63,3 +63,44 @@ git pull
 | `config/` 클래스 | 새로운 설정 파일 추가 시 파일명은 `XXConfig.java` 로 명명<br>예: `MqttConfig.java`, `KafkaConfig.java` |
 
 ---
+
+## ✅ Git 커밋 메시지 컨벤션 (구분자 `|')
+
+```
+[type] | sprint | JIRA-KEY | 기능 요약 | 담당자
+```
+
+---
+
+### 📌 예시
+
+```
+feat    | sprint0 | 없음 | 센서 등록 API 구현         | 유승희
+feat    | sprint0 | IOT-123 | 센서 등록 API 구현         | 유승희
+fix     | sprint1 | IOT-210 | MQTT 수신 실패 예외 처리   | 윤다인
+config  | sprint0 | IOT-001 | H2 DB 설정 추가            | 김우영
+docs    | sprint1 | IOT-999 | README 초안 작성           | 정민석
+```
+
+---
+
+### ✅ 항목별 설명
+
+| 항목       | 내용                 | 예시                        |
+|------------|----------------------|-----------------------------|
+| `type`     | 작업 유형            | `feat`, `fix`, `docs`, `config`, `refactor`, `test`, `chore`, `style` |
+| `sprint`   | 스프린트 구분        | `sprint0`, `sprint1`, `sprint2` 등 |
+| `JIRA-KEY` | 연동 이슈 번호       | `IOT-123`  , `없음`  |
+| 기능 요약  | 핵심 변경 내용       | 예: `센서 등록 API 구현`   |
+| 담당자     | 개발자 실명 or 닉네임 | 예: `유승희`                |
+
+---
+
+### ✅ 추천 커밋 예시 (복붙용)
+
+```bash
+git commit -m "feat    | sprint1 | IOT-112 | 작업자 센서 조회 API 추가 | 유승희"
+git commit -m "fix     | sprint0 | IOT-009 | H2 연결 오류 수정         | 윤다인"
+git commit -m "config  | sprint0 | IOT-000 | Spring Boot 3.4.4 적용    | 김우영"
+git commit -m "chore   | sprint1 | IOT-999 | 커밋 컨벤션 README 정리   | 정민석"
+```
