@@ -25,4 +25,8 @@ public class WebSocketSender {
     public void sendDangerAlarm(AlarmEventDto alarmEventDto) {
         messagingTemplate.convertAndSend("/topic/alarm", alarmEventDto);
     }
+
+    public void sendUnreadCount(long count){
+        messagingTemplate.convertAndSend("/topic/unread-count", count);
+    }
 }

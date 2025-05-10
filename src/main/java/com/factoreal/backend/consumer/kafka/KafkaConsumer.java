@@ -1,13 +1,12 @@
 package com.factoreal.backend.consumer.kafka;
 
-import com.factoreal.backend.dto.LogType;
 import com.factoreal.backend.dto.SensorKafkaDto;
+import com.factoreal.backend.dto.abnormalLog.LogType;
 import com.factoreal.backend.entity.AbnormalLog;
 import com.factoreal.backend.sender.WebSocketSender;
 import com.factoreal.backend.service.AbnormalLogService;
 import com.factoreal.backend.strategy.NotificationStrategy;
 import com.factoreal.backend.strategy.NotificationStrategyFactory;
-import com.factoreal.backend.strategy.RiskMessageProvider;
 import com.factoreal.backend.strategy.enums.AlarmEventDto;
 import com.factoreal.backend.strategy.enums.RiskLevel;
 import com.factoreal.backend.strategy.enums.SensorType;
@@ -37,7 +36,6 @@ public class KafkaConsumer {
 
     // 알람 푸시 용
     private final NotificationStrategyFactory factory;
-    private final RiskMessageProvider messageProvider;
 
     // ELK
     private final RestHighLevelClient elasticsearchClient; // ELK client
@@ -85,7 +83,9 @@ public class KafkaConsumer {
                 // 대시보드용 히트맵 로직
                 // #################################
                 // ❗dangerLevel이 0일 때도 전송해야되면 if 문은 필요없을 것 같아 제거.
+
                 webSocketSender.sendDangerLevel(dto.getZoneId(), dto.getSensorType(), dangerLevel);
+                abnormalLogService.readRequired(); // 읽지 않은 알람 수
             }
 
 
