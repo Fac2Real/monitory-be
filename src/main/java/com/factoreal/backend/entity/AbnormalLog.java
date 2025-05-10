@@ -1,6 +1,6 @@
 package com.factoreal.backend.entity;
 
-import com.factoreal.backend.dto.LogType;
+import com.factoreal.backend.dto.abnormalLog.LogType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -43,4 +43,8 @@ public class AbnormalLog {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone_id", referencedColumnName = "zone_id")
     private Zone zone; // 공간 고유 ID
+
+    @Column(name = "is_read")
+    @Builder.Default
+    private Boolean isRead = false;
 }

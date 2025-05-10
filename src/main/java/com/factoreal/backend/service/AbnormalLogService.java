@@ -1,17 +1,24 @@
 package com.factoreal.backend.service;
 
-import com.factoreal.backend.dto.LogType;
+import com.factoreal.backend.dto.abnormalLog.AbnormalLogDto;
+import com.factoreal.backend.dto.abnormalLog.AbnormalPagingDto;
+import com.factoreal.backend.dto.abnormalLog.LogType;
 import com.factoreal.backend.dto.SensorKafkaDto;
 import com.factoreal.backend.entity.AbnormalLog;
 import com.factoreal.backend.entity.Zone;
 import com.factoreal.backend.repository.AbnLogRepository;
+import com.factoreal.backend.sender.WebSocketSender;
 import com.factoreal.backend.strategy.RiskMessageProvider;
 import com.factoreal.backend.strategy.enums.RiskLevel;
 import com.factoreal.backend.strategy.enums.SensorType;
-import jakarta.transaction.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -20,14 +27,17 @@ public class AbnormalLogService {
     private final AbnLogRepository abnLogRepository;
     private final ZoneService zoneService;
     private final RiskMessageProvider riskMessageProvider;
+    private final ObjectMapper objectMapper;
+    private final WebSocketSender webSocketSender;
 
     // 알람 객체를 받아와서 로그 객체 생성.
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public AbnormalLog saveAbnormalLogFromKafkaDto(
             SensorKafkaDto sensorKafkaDto,
             SensorType sensorType,
             RiskLevel riskLevel,
-            LogType targetType) throws Exception{
+            LogType targetType
+    ) throws Exception{
         Zone zone = zoneService.getZone(sensorKafkaDto.getZoneId());
 
 
@@ -41,28 +51,105 @@ public class AbnormalLogService {
                 .abnormalType(riskMessageProvider.getMessage(sensorType,riskLevel))
                 .abnVal(sensorKafkaDto.getVal())
                 .zone(zone)
+                .isRead(false)
                 .build();
 
         return abnLogRepository.save(abnormalLog);
     }
-    /**
-     * DTO의 AlarmEvent.RiskLevel(Kafka)을 Entity의 RiskLevel로 매핑합니다.
-     * Factory에서는 Entity의 RiskLevel을 사용해야 합니다.
-     */
-//    private RiskLevel mapDtoSeverityToEntityRiskLevel(RiskLevel dtoSeverity) {
-//        if (dtoSeverity == null) {
-//            return null;
-//        }
-//        // DTO의 심각도 수준에 따라 Entity RiskLevel 매핑
-//        // CRITICAL -> DANGER (높은 위험)
-//        // WARNING, INFO -> WARN (낮은 위험/정보)
-//        return switch (dtoSeverity) {
-//            case CRITICAL -> RiskLevel.CRITICAL;
-//            case WARNING, INFO -> RiskLevel.WARNING;
-//            default -> {
-//                log.warn("Unknown AlarmEvent DTO severity received: {}. Mapping to WARN.", dtoSeverity);
-//                yield RiskLevel.WARNING; // 알 수 없는 값은 기본 WARN으로 처리
-//            }
-//        };
-//    }
+
+
+    public Page<AbnormalLogDto> findAllAbnormalLogs(AbnormalPagingDto abnormalPagingDto) {
+        // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
+        Pageable pageable = getPageable(abnormalPagingDto);
+        Page<AbnormalLog> abnormalLogs = abnLogRepository.findAll(pageable);
+        return abnormalLogs.map(abn_log ->
+                AbnormalLogDto.builder()
+                        .id(abn_log.getId())
+                        .targetType(abn_log.getTargetType())
+                        .targetId(abn_log.getTargetId())
+                        .abnormalType(abn_log.getAbnormalType())
+                        .abnVal(abn_log.getAbnVal())
+                        .detectedAt(abn_log.getDetectedAt())
+                        .zoneId(abn_log.getZone().getZoneId())
+                        .zoneName(abn_log.getZone().getZoneName())
+                        .build()
+        );
+    }
+
+    public Page<AbnormalLogDto> findAllAbnormalLogsUnRead(AbnormalPagingDto abnormalPagingDto) {
+        // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
+        Pageable pageable = getPageable(abnormalPagingDto);
+        Page<AbnormalLog> abnormalLogs = abnLogRepository.findAllByIsReadIsFalse(pageable);
+        return abnormalLogs.map(abn_log ->
+                AbnormalLogDto.builder()
+                        .id(abn_log.getId())
+                        .targetType(abn_log.getTargetType())
+                        .targetId(abn_log.getTargetId())
+                        .abnormalType(abn_log.getAbnormalType())
+                        .abnVal(abn_log.getAbnVal())
+                        .detectedAt(abn_log.getDetectedAt())
+                        .zoneId(abn_log.getZone().getZoneId())
+                        .zoneName(abn_log.getZone().getZoneName())
+                        .build()
+        );
+    }
+
+    public Page<AbnormalLogDto> findAbnormalLogsByAbnormalType(AbnormalPagingDto abnormalPagingDto, String abnormalType){
+        // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
+        Pageable pageable = getPageable(abnormalPagingDto);
+        Page<AbnormalLog> abnormalLogs = abnLogRepository.findAbnormalLogsByAbnormalType(abnormalType,pageable);
+        return abnormalLogs.map(abn_log ->
+                AbnormalLogDto.builder()
+                        .id(abn_log.getId())
+                        .targetType(abn_log.getTargetType())
+                        .targetId(abn_log.getTargetId())
+                        .abnormalType(abn_log.getAbnormalType())
+                        .abnVal(abn_log.getAbnVal())
+                        .detectedAt(abn_log.getDetectedAt())
+                        .zoneId(abn_log.getZone().getZoneId())
+                        .zoneName(abn_log.getZone().getZoneName())
+                        .build()
+        );
+    }
+
+    //
+    public Page<AbnormalLogDto> findAbnormalLogsByTargetId(AbnormalPagingDto abnormalPagingDto, String targetType, String targetId){
+        // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
+        Pageable pageable = getPageable(abnormalPagingDto);
+        Page<AbnormalLog> abnormalLogs = abnLogRepository.findAbnormalLogsByTargetTypeAndTargetId(
+                targetType,
+                targetId,
+                pageable);
+        return abnormalLogs.map(
+                abn_log -> objectMapper.convertValue(abn_log, AbnormalLogDto.class)
+        );
+    }
+
+
+    // FE에서 알람을 클릭한 경우 읽음으로 수정
+    @Transactional
+    public boolean readCheck(Long abnormalLogId){
+        AbnormalLog abnormalLog = abnLogRepository.findById(abnormalLogId).orElse(null);
+        if(abnormalLog == null){
+            return false;
+        }
+
+        abnormalLog.setIsRead(true);
+        abnLogRepository.save(abnormalLog);
+        readRequired();
+        return true;
+    }
+    @Transactional(readOnly = true)
+    // 읽지 않은 알람이 몇개인지 반환
+    public void readRequired(){
+        Long count =  abnLogRepository.countByIsReadFalse();
+        webSocketSender.sendUnreadCount(count);
+    }
+
+    private Pageable getPageable(AbnormalPagingDto abnormalPagingDto){
+        return PageRequest.of(
+                abnormalPagingDto.getPage(),
+                abnormalPagingDto.getSize()
+        );
+    }
 }

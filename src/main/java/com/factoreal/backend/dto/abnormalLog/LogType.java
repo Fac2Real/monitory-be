@@ -1,4 +1,4 @@
-package com.factoreal.backend.dto;
+package com.factoreal.backend.dto.abnormalLog;
 
 public enum LogType {
     Sensor,
