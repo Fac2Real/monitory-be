@@ -2,6 +2,7 @@ package com.factoreal.backend.sender;
 
 import com.factoreal.backend.dto.SystemLogDto;
 import com.factoreal.backend.dto.ZoneDangerDto;
+import com.factoreal.backend.strategy.enums.AlarmEventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,16 @@ public class WebSocketSender { // 실제로 프론트에 메시지를 전송하�
     }
 
     /**
-     * 시스템 로그 전송
+     * 시스템 로그를 WebSocket으로 전송
      */
     public void sendSystemLog(SystemLogDto logDto) {
         messagingTemplate.convertAndSend("/topic/system-log", logDto);
+    }
+
+    /**
+     * 알람 이벤트를 WebSocket으로 전송
+     */
+    public void sendDangerAlarm(AlarmEventDto alarmEventDto) {
+        messagingTemplate.convertAndSend("/topic/alarm", alarmEventDto);
     }
 }

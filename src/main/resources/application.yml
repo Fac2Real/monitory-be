@@ -60,7 +60,7 @@ spring:
   kafka:
     bootstrap-servers: 43.200.39.139:9092
     consumer:
-      group-id: monitory-consumer-group
+      group-id: monitory-consumer-group-test1233
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
