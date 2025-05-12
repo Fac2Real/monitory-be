@@ -51,6 +51,10 @@ public class KafkaConsumer {
     // ELK
     private final RestHighLevelClient elasticsearchClient; // ELK client
 
+    // Elasticsearch index name from configuration
+    @Value("${elasticsearch.index}")
+    private String esIndex;
+
     //    @KafkaListener(topics = {"EQUIPMENT", "ENVIRONMENT"}, groupId = "monitory-consumer-group-1")
     @KafkaListener(topics = {"EQUIPMENT", "ENVIRONMENT"}, groupId = "${spring.kafka.consumer.group-id:danger-alert-group}")
     public void consume(String message) {
@@ -97,7 +101,7 @@ public class KafkaConsumer {
             Map<String, Object> map = objectMapper.convertValue(dto, new TypeReference<>() {});
             map.put("timestamp", Instant.now().toString());  // 타임필드 추가
 
-            IndexRequest request = new IndexRequest("sensor-data").source(map);
+            IndexRequest request = new IndexRequest(esIndex).source(map);
             elasticsearchClient.index(request, RequestOptions.DEFAULT);
 
             log.info("✅ Elasticsearch 저장 완료: {}", dto.getSensorId());

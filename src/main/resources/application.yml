@@ -93,4 +93,11 @@ springdoc:
 aws:
   access-key: ${AWS_IAM_ACCESS_KEY}
   secret-key: ${AWS_IAM_SECRET_KEY}
-  region: ap-northeast-2 
+  region: ap-northeast-2
+
+# Elasticsearch client settings
+elasticsearch:
+  host: localhost
+  port: 9200
+  scheme: http
+  index: sensor-data 
