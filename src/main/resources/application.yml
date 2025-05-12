@@ -16,7 +16,6 @@ spring:
   # ===============================
   # JPA / Hibernate
   # ===============================
-  # ? JPA? Flyway?? ?? ??????
   jpa:
     hibernate:
       ddl-auto: none
@@ -68,22 +67,23 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
+# ===============================
+# Server Port
+# ===============================
 server:
-  # ===============================
-  # Server Port
-  # ===============================
   port: 8080
 
+
+# ===============================
+# Debug mode
+# ===============================
 logging:
-  # ===============================
-  # Debug mode
-  # ===============================
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
+# Swagger URL
 springdoc:
-  # Swagger URL
   swagger-ui:
     path: /docs
 

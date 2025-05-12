@@ -251,6 +251,7 @@ public class KafkaConsumer {
                 .sensorType(sensorType.name())
                 .messageBody(abnormalLog.getAbnormalType())
                 .source(source)
+                .time(data.getTime())
                 .riskLevel(riskLevel)
                 .build();
     }

@@ -21,7 +21,7 @@ public class AlarmEventDto {
     private double sensorValue; // 이상치 값
     private RiskLevel riskLevel; // 알람 심각도 (예: CRITICAL, WARNING, INFO) - 채널 선택, 표현 방식 결정에 사용
 
-    private Timestamp timestamp;      // 알람 발생 시각 -> BE에서 할당
+    private String time;      // 알람 발생 시각 -> BE에서 할당
 
     // 3. 내용 정보 (프로토콜별로 활용 방식이 다름)
 //        String title,           // 알람 제목 (푸시 제목, 이메일 제목 등에 활용)
