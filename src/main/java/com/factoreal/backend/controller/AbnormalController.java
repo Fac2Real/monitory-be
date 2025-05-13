@@ -52,8 +52,8 @@ public class AbnormalController {
 
     // 읽지 않은 알람 개수 반환 -> websocket으로 전부 보내주기
     @GetMapping("/unread-count")
-    public ResponseEntity<Object> getUnreadAlarmCount() {
-        abnormalLogService.readRequired();
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Long> getUnreadAlarmCount() {
+        Long count = abnormalLogService.readRequired();
+        return ResponseEntity.ok(count);
     }
 }
