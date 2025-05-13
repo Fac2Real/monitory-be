@@ -27,7 +27,10 @@ public class Sensor {
     private String valUnit;
 
     @Column(name = "sensor_thres")
-    private Integer sensorThres;  // 임계치
+    private Double sensorThres;  // 임계치
+
+    @Column(name = "allow_val")
+    private Double allowVal; // 허용치
 
     @Column(name = "created_at")
     private LocalDateTime createdAt; // 센서생성시간
