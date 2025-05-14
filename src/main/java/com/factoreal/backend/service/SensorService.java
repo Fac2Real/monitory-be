@@ -68,6 +68,16 @@ public class SensorService {
         Sensor sensor = repo.findBySensorId(sensorId)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "존재하지 않는 센서 ID: " + sensorId));
+        sensor.setSensorThres(dto.getSensorThres());
+        sensor.setAllowVal(dto.getAllowVal());
         repo.save(sensor);
+    }
+
+    /** 이전에 repository를 직접 호출하던 부분을 메서드로 분리 */
+    // 센서 ID로 Sensor 엔티티 조회
+    public Sensor getSensorById(String sensorId) {
+        return repo.findBySensorId(sensorId)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "존재하지 않는 센서 ID: " + sensorId));
     }
 }

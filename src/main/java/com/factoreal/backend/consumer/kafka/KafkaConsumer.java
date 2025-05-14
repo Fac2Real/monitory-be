@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import com.factoreal.backend.service.SensorService;
+import com.factoreal.backend.entity.Sensor;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -60,6 +62,8 @@ public class KafkaConsumer {
      // 로그 기록용
      private final AbnormalLogService abnormalLogService;
 
+     private final SensorService sensorService;
+
     //    @KafkaListener(topics = {"EQUIPMENT", "ENVIRONMENT"}, groupId = "monitory-consumer-group-1")
     @KafkaListener(topics = {"EQUIPMENT", "ENVIRONMENT"}, groupId = "${spring.kafka.consumer.group-id:danger-alert-group}")
     public void consume(String message) {
@@ -81,6 +85,11 @@ public class KafkaConsumer {
                 log.info("▶︎ 위험도 감지 start");
                 int dangerLevel = getDangerLevel(dto.getSensorType(), dto.getVal());
                 log.info("⚠️ 위험도 {} 센서 타입 : {} 감지됨. Zone: {}", dangerLevel, dto.getSensorType(), dto.getZoneId());
+                
+                // 자동제어 로직: threshold 및 오차범위 벗어나면 메시지 전송
+                // 중첩 try-catch 문 :  Kafka 메시지 처리에서 자동제어 로직은 실패해도, 전체 처리는 멈추지 않게 하기 위해
+                performAutoControl(dto);
+
                 // #################################
                 // Abnormal 로그 기록 로직
                 // #################################
@@ -287,5 +296,49 @@ public class KafkaConsumer {
             // TODO: 전략 실행 중 오류 처리
         }
     }
+
+    /**
+     * 측정값이 (threshold ± allowVal) 범위를 벗어나면 제어 메시지 생성
+     */
+    private void performAutoControl(SensorKafkaDto dto) {
+        try {
+            Sensor sensor = sensorService.getSensorById(dto.getSensorId());
+            String type = sensor.getSensorType().name();
+            double threshold = sensor.getSensorThres();
+            double tolerance = sensor.getAllowVal() != null ? sensor.getAllowVal() : 0.0;
+            double value = dto.getVal();
+
+            if (value < threshold - tolerance || value > threshold + tolerance) {
+                String msg = buildControlMessage(type, value, threshold, tolerance);
+                log.info("[자동제어 메시지] {}", msg);
+                // TODO: MQTT 퍼블리시 로직으로 대체
+            }
+        } catch (Exception e) {
+            log.error("자동제어 오류 처리 중 예외 발생", e);
+        }
+    }
+
+    private String buildControlMessage(
+        String type, double val, double thresh, double tol) {
+    return switch (type.toLowerCase()) {
+        case "temp" ->
+            String.format("현재 온도는 %.1f℃입니다. 적정 온도 범위는 %.1f~%.1f℃입니다.",
+                          val, thresh - tol, thresh + tol);
+        case "humid" ->
+            String.format("현재 습도는 %.1f%%입니다. 적정 습도 범위는 %.1f~%.1f%%입니다.",
+                          val, thresh - tol, thresh + tol);
+        case "vibration" ->
+            String.format("현재 진동 값은 %.1fmm/s입니다. 허용 범위는 %.1f~%.1fmm/s입니다.",
+                          val, thresh - tol, thresh + tol);
+        case "current" ->
+            String.format("현재 전류는 %.1fmA입니다. 허용 범위는 %.1f~%.1fmA입니다.",
+                          val, thresh - tol, thresh + tol);
+        case "dust" ->
+            String.format("현재 미세먼지는 %.1f㎍/㎥입니다. 허용 범위는 %.1f~%.1f㎍/㎥입니다.",
+                          val, thresh - tol, thresh + tol);
+        default ->
+            String.format("현재 값은 %.1f이고, 허용 범위는 %.1f~%.1f입니다.",
+                          val, thresh - tol, thresh + tol);
+    };
 
 }
