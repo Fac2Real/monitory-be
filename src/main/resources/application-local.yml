@@ -1,0 +1,37 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+    activate:
+      on-profile: local
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: default-consumer-group-1
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/my_database
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: user
+    password: factor2al
+
+  flyway:
+    enabled: true
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+
+
+aws:
+  access-key: ${AWS_IAM_ACCESS_KEY}
+  secret-key: ${AWS_IAM_SECRET_KEY}
+  region: ap-northeast-2
+
+# Elasticsearch client settings
+elasticsearch:
+  host: localhost
+  port: 9200
+  scheme: http
+  index: sensor-data

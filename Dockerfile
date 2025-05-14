@@ -3,9 +3,12 @@ WORKDIR /home/gradle/project
 COPY --chown=gradle:gradle . .
 RUN gradle build --no-daemon -x test
 
-FROM amazoncorretto:17-alpine
+FROM amazoncorretto:17
 
 VOLUME /tmp
 COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app.jar", "--spring.profiles.active=dev"]
+
+ENV SPRING_PROFILES_ACTIVE=cloud
+
+ENTRYPOINT ["java", "-jar", "/app.jar"]
