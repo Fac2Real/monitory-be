@@ -20,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class AbnormalLogService {
     ) throws Exception{
         Zone zone = zoneService.getZone(sensorKafkaDto.getZoneId());
 
-
+        log.info(">>>>>> zone : {} " ,zone);
 
         // DTO의 severity (AlarmEvent.RiskLevel)를 Entity RiskLevel로 매핑
 //        RiskLevel entityRiskLevel = mapDtoSeverityToEntityRiskLevel(riskLevel);
@@ -51,6 +53,7 @@ public class AbnormalLogService {
                 .abnormalType(riskMessageProvider.getMessage(sensorType,riskLevel))
                 .abnVal(sensorKafkaDto.getVal())
                 .zone(zone)
+                .detectedAt(LocalDateTime.parse(sensorKafkaDto.getTime()))
                 .isRead(false)
                 .build();
 

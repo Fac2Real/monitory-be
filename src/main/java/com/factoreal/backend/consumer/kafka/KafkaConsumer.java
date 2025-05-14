@@ -63,6 +63,8 @@ public class KafkaConsumer {
     //    @KafkaListener(topics = {"EQUIPMENT", "ENVIRONMENT"}, groupId = "monitory-consumer-group-1")
     @KafkaListener(topics = {"EQUIPMENT", "ENVIRONMENT"}, groupId = "${spring.kafka.consumer.group-id:danger-alert-group}")
     public void consume(String message) {
+
+        log.info("💡수신한 Kafka 메시지 : " + message) ;
         try {
             SensorKafkaDto dto = objectMapper.readValue(message, SensorKafkaDto.class);
 
@@ -71,7 +73,7 @@ public class KafkaConsumer {
 
             // 공간 센서일 때만 히트맵용 웹소켓 전송
             if (dto.getEquipId() != null && dto.getZoneId() != null && dto.getEquipId().equals(dto.getZoneId())) {
-                log.info("✅ 수신한 Kafka 메시지: " + message);
+                log.info("✅ 공산 센서 로직 start");
                 // #################################
                 // 비동기 ES 저장
                 // #################################
