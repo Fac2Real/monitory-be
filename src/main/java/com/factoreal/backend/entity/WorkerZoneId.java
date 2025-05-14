@@ -12,12 +12,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-// role_info 테이블 복합키 정의
-public class RoleId implements Serializable {
+public class WorkerZoneId implements Serializable {
 
-    @Column(name = "role_id", length = 50, nullable = false)
-    private String roleId;
+    @Column(name = "worker_id", length = 100)
+    private String workerId;
 
-    @Column(name = "zone_id", length = 100, nullable = false)
+    @Column(name = "zone_id", length = 100)
     private String zoneId;
 }

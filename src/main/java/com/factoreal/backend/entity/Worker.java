@@ -25,18 +25,4 @@ public class Worker {
 
     @Column(name = "email", length = 100)
     private String email; // 작업자 이메일
-
-    @Column(name = "role_id", length = 50, nullable = false)
-    private String roleId; //
-
-    @Column(name = "zone_id", length = 100, nullable = false)
-    private String zoneId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "role_id", referencedColumnName = "role_id", insertable = false, updatable = false),
-            @JoinColumn(name = "zone_id", referencedColumnName = "zone_id", insertable = false, updatable = false)
-    })
-    private Role roleInfo;
-
 }
