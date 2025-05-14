@@ -3,7 +3,7 @@ name: Build and Deploy to EC2
 on:
   push:
     branches:
-      - fix/21-workflow-ec2
+      - develop
 
 jobs:
   build-and-push-image:
