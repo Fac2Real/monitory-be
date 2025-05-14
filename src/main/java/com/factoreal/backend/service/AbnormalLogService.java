@@ -141,9 +141,10 @@ public class AbnormalLogService {
     }
     @Transactional(readOnly = true)
     // 읽지 않은 알람이 몇개인지 반환
-    public void readRequired(){
+    public Long readRequired(){
         Long count =  abnLogRepository.countByIsReadFalse();
         webSocketSender.sendUnreadCount(count);
+        return count;
     }
 
     private Pageable getPageable(AbnormalPagingDto abnormalPagingDto){
