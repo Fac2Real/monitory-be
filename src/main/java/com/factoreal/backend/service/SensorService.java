@@ -58,8 +58,15 @@ public class SensorService {
     // 센서 전체 리스트 조회
     public List<SensorDto> getAllSensors() {
         return repo.findAll().stream()
-        .map(s -> new SensorDto(s.getSensorId(), s.getSensorType().toString(), s.getZone().getZoneId(), s.getEquip().getEquipId(), s.getSensorThres(), s.getAllowVal()))
-        .collect(Collectors.toList());
+            .map(s -> new SensorDto(
+                s.getSensorId(),
+                s.getSensorType().toString(),
+                s.getZone().getZoneId(),
+                s.getEquip().getEquipId(),
+                s.getSensorThres(),
+                s.getAllowVal()
+            ))
+            .collect(Collectors.toList());
     }
 
     // Sensor Table 업데이트
@@ -68,6 +75,16 @@ public class SensorService {
         Sensor sensor = repo.findBySensorId(sensorId)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "존재하지 않는 센서 ID: " + sensorId));
+        sensor.setSensorThres(dto.getSensorThres());
+        sensor.setAllowVal(dto.getAllowVal());
         repo.save(sensor);
+    }
+
+    /** 이전에 repository를 직접 호출하던 부분을 메서드로 분리 */
+    // 센서 ID로 Sensor 엔티티 조회
+    public Sensor getSensorById(String sensorId) {
+        return repo.findBySensorId(sensorId)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "존재하지 않는 센서 ID: " + sensorId));
     }
 }
