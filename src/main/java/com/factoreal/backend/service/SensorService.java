@@ -58,7 +58,7 @@ public class SensorService {
     // 센서 전체 리스트 조회
     public List<SensorDto> getAllSensors() {
         return repo.findAll().stream()
-        .map(s -> new SensorDto(s.getSensorId(), s.getSensorType().toString(), s.getZone().getZoneId(), s.getEquip().getEquipId()))
+        .map(s -> new SensorDto(s.getSensorId(), s.getSensorType().toString(), s.getZone().getZoneId(), s.getEquip().getEquipId(), s.getSensorThres(), s.getAllowVal()))
         .collect(Collectors.toList());
     }
 
