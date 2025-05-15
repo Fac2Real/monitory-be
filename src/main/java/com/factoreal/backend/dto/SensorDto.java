@@ -14,6 +14,10 @@ public class SensorDto { // BE -> FE 용 DTO
     private String zoneId; // zoneId 저장
     private String equipId;
 
+    // 내가 수정한 부분.... 여기랑 리턴문
+    private Double sensorThres;
+    private Double sensorAllowVal;
+
     public static SensorDto fromEntity(Sensor sensor) {
         if (sensor == null) return null;
 
@@ -22,6 +26,8 @@ public class SensorDto { // BE -> FE 용 DTO
                 .sensorType(sensor.getSensorType().toString())
                 .zoneId(sensor.getZone().getZoneId())
                 .equipId(sensor.getEquip().getEquipId())
+                .sensorThres(sensor.getSensorThres())
+                .sensorAllowVal(sensor.getAllowVal())
                 .build();
     }
 }

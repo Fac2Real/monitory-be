@@ -50,7 +50,7 @@ public class MqttService {
                 String equipIdVal = reported.path("equipId").asText(null);   // 키가 없으면 null
                 String equipId    = (equipIdVal == null || equipIdVal.isBlank()) ? null : equipIdVal;
 
-                SensorDto dto = new SensorDto(sensorId, type , zoneId, equipId);
+                SensorDto dto = new SensorDto(sensorId, type , zoneId, equipId, null, null);
                 sensorService.saveSensor(dto); // 중복이면 예외 발생
                 log.info("✅ 센서 저장 완료: {}", sensorId);
             } catch (DataIntegrityViolationException e) {
