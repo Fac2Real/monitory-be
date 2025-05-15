@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SensorUpdateDto {
-    private String sensorPurpose;  // 센서목적
-    private String location;       // 위치
+    // private String sensorPurpose;  // 센서목적
+    // private String location;       // 위치
     private Double sensorThres;      // 임계치
     private Double allowVal;       // 허용치(오차범위)
 

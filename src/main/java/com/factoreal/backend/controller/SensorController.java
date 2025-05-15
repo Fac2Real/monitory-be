@@ -46,7 +46,7 @@ public class SensorController {
 
     // DB Sensor Table 업데이트 ( FE -> BE 센서ID 매핑해서 센서목적, 위치, 임계치 업데이트 )
     @PostMapping("/{sensorId}")
-    @Operation(summary = "센서 정보 업데이트", description = "센서ID 매핑해서 센서목적, 위치, 임계치 업데이트 (FE -> BE) ")
+    @Operation(summary = "센서 정보 업데이트", description = "센서ID 매핑해서 임계치(sensorThres)와 허용치(allowVal) 업데이트 (FE -> BE) ")
     public ResponseEntity<Void> update(
             @PathVariable("sensorId") String sensorId,
             @RequestBody SensorUpdateDto dto) {
