@@ -25,8 +25,9 @@ public class AlarmEventDto {
 
     // 3. 내용 정보 (프로토콜별로 활용 방식이 다름)
 //        String title,           // 알람 제목 (푸시 제목, 이메일 제목 등에 활용)
-    private String messageBody;     // 알람 본문 (푸시 내용, SMS 내용, 이메일 본문 등에 활용)
+    private String messageBody;    // 알람 본문 (푸시 내용, SMS 내용, 이메일 본문 등에 활용)
 
     // 4. 부가 정보 (선택적)
     private String source;          // 알람 발생 출처 (예: "WearableSensorService", "BatchJobMonitor")
+    private String zoneName;
 }

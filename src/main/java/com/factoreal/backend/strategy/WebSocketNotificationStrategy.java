@@ -26,6 +26,6 @@ public class WebSocketNotificationStrategy implements  NotificationStrategy{
 
     @Override
     public RiskLevel getSupportedLevel() {
-        return RiskLevel.WARNING;
+        return RiskLevel.INFO;
     }
 }

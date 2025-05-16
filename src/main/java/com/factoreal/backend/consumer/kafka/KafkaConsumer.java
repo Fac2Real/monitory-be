@@ -4,6 +4,7 @@ import com.factoreal.backend.dto.SensorKafkaDto;
 import com.factoreal.backend.dto.abnormalLog.LogType;
 import com.factoreal.backend.entity.AbnormalLog;
 import com.factoreal.backend.dto.SystemLogDto;
+import com.factoreal.backend.entity.Zone;
 import com.factoreal.backend.sender.WebSocketSender;
 import com.factoreal.backend.service.ZoneService;
 import com.factoreal.backend.entity.AbnormalLog;
@@ -263,8 +264,8 @@ public class KafkaConsumer {
 
         String source = data.getZoneId().equals(data.getEquipId()) ? "공간 센서" : "설비 센서";
         SensorType sensorType = SensorType.valueOf(data.getSensorType());
-
-        // 알람 이벤트 객체 반환.
+        String zoneName = zoneService.getZone(data.getZoneId()).getZoneName();
+        // 알람 이벤트 객체 반환
         return AlarmEventDto.builder()
                 .eventId(abnormalLog.getId())
                 .sensorId(data.getSensorId())
@@ -275,6 +276,7 @@ public class KafkaConsumer {
                 .source(source)
                 .time(data.getTime())
                 .riskLevel(riskLevel)
+                .zoneName(zoneName)
                 .build();
     }
 
