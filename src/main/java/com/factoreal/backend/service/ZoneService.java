@@ -126,6 +126,7 @@ public class ZoneService {
                                 return FacilityDto.builder()
                                         .name(equipName)
                                         .facSensor(facSensors)
+                                        .id(equipId)
                                         .build();
                             })
                             .toList();

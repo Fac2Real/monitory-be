@@ -14,7 +14,8 @@ public class FacilityDto {
 
     @JsonProperty("name")
     private String name;
-
+    @JsonProperty("id")
+    private String id;
     @JsonProperty("fac_sensor")
     private List<SensorDto> facSensor;
 }
