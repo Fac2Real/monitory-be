@@ -30,7 +30,13 @@ public class ZoneService {
     private final EquipRepository equipRepo;
 
     private final EquipService equipService;
-    // 1. 공간명 중복 체크 -> 2. 고유한 공간ID 할당 -> 3. save 한 뒤 DTO로 반환
+    
+    /**
+     * 공간 정보를 생성합니다.
+     * @param zoneName 생성할 공간 이름
+     * @return 생성된 공간 정보 DTO
+     * @throws ResponseStatusException 이미 존재하는 공간명인 경우 예외 발생
+     */
     @Transactional
     public ZoneDto createZone(String zoneName) {
         // 1. 공간명 중복 체크
@@ -42,8 +48,7 @@ public class ZoneService {
         String zoneId = ZoneIdGenerator.generateZoneId();
         // 3. save 한 뒤 DTO로 반환
         Zone zone = repo.save(new Zone(zoneId, zoneName));
-        // 4. equip_id 가 없는 (설비 명이 없는 데이터를 위한 빈 equip_객체 생성)
-        //equipRepo.
+        // 4. 공간에 대한 센서인 경우, equip_id가 zone_id와 동일하고 설비명이 empty임.
         EquipDto equipDto = EquipDto
                 .builder()
                 .equipName("empty")
@@ -51,10 +56,18 @@ public class ZoneService {
                 .zoneName(zoneName)
                 .build();
         equipService.saveEquip(equipDto);
-        return new ZoneDto(zone.getZoneId(), zone.getZoneName());
+        
+        // 5. Entity -> DTO 변환하여 반환
+        return ZoneDto.fromEntity(zone);
     }
 
-    // 공간정보 업데이트
+    /**
+     * 공간 정보를 수정합니다.
+     * @param zoneName 수정할 공간 이름
+     * @param dto 수정 정보가 담긴 DTO
+     * @return 수정된 공간 정보 DTO
+     * @throws ResponseStatusException 존재하지 않는 공간명이거나 수정할 이름이 이미 존재하는 경우 예외 발생
+     */
     @Transactional
     public ZoneDto updateZone(String zoneName, ZoneUpdateDto dto) {
         // 1. 수정할 공간이 존재하는지 확인
@@ -73,25 +86,31 @@ public class ZoneService {
         zone.setZoneName(dto.getZoneName());
         Zone updatedZone = repo.save(zone);
 
-        // 4. DTO로 반환
-        return new ZoneDto(updatedZone.getZoneId(), updatedZone.getZoneName());
+        // 4. Entity -> DTO 변환하여 반환
+        return ZoneDto.fromEntity(updatedZone);
     }
 
-    // 모든 공간 조회
+    /**
+     * 모든 공간 정보를 조회합니다.
+     * @return 공간 정보 DTO 리스트
+     */
     public List<ZoneDto> getAllZones() {
         return repo.findAll().stream()
-                .map(zone -> new ZoneDto(zone.getZoneId(), zone.getZoneName()))
+                .map(ZoneDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 모든 공간의 설비 및 센서 데이터를 계층적으로 구조화하여 조회합니다.
+     * @return 공간별 설비 및 센서 정보가 구조화된 ZoneItemDto 리스트
+     */
     @Transactional
-    public List<ZoneItemDto> getZoneItems() {
+    public List<ZoneItemDto> getAllZoneItems() {
 
         List<Zone> zones = repo.findAll();
 
         return zones.stream()
                 .map(zone -> {
-
                     List<Sensor> sensors = sensorRepo.findByZone(zone);
 
                     // 환경 센서
@@ -104,7 +123,6 @@ public class ZoneService {
                             .map(SensorDto::fromEntity)                      // Sensor → SensorDto
                             .toList();
 
-
                     List<Equip> equips = equipRepo.findEquipsByZone(zone).stream()
                             .filter(e -> e.getEquipName() != null && !e.getEquipName().equalsIgnoreCase("empty"))
                             .toList();   // empty이름을 가진 설비(환경센서)는 설비 목록에서 제외하기
@@ -112,12 +130,11 @@ public class ZoneService {
                     // 설비 센서 그룹핑
                     Map<String, List<SensorDto>> facGroup = sensors.stream()
                             .filter(s -> !Objects.equals(s.getZone().getZoneId(), s.getEquip().getEquipId()))
-                            .map(SensorDto::fromEntity)                 // ★ Sensor → SensorDto
+                            .map(SensorDto::fromEntity)                 // Sensor → SensorDto
                             .collect(Collectors.groupingBy(SensorDto::getEquipId));
 
                     List<FacilityDto> facilities = equips.stream()
                             .map(entry -> {
-
                                 String equipId = entry.getEquipId();
                                 String equipName = equipRepo.findEquipNameByEquipId(equipId); // 1-row 조회
 
@@ -131,7 +148,7 @@ public class ZoneService {
                             })
                             .toList();
 
-                    /* 4) ZoneItemDto 조립 */
+                    /* ZoneItemDto 조립 */
                     return ZoneItemDto.builder()
                             .title(zone.getZoneName())
                             .envSensor(envSensorDtos)
@@ -141,6 +158,11 @@ public class ZoneService {
                 .toList();
     }
 
+    /**
+     * 공간 ID로 Zone 엔티티를 조회합니다.
+     * @param zoneId 조회할 공간 ID
+     * @return 조회된 Zone 엔티티
+     */
     public Zone getZone(String zoneId) {
         return repo.findByZoneId(zoneId);
     }

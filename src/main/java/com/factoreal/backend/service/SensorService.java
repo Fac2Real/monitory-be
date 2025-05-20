@@ -30,7 +30,12 @@ public class SensorService {
     private final ZoneRepository zoneRepo;
     private final EquipRepository equipRepo;
 
-    // 센서 등록
+    /**
+     * 센서 정보를 등록합니다.
+     * @param dto 저장할 센서 정보가 담긴 DTO
+     * @return 저장된 Sensor 엔티티
+     * @throws ResponseStatusException 존재하지 않는 공간 ID나 설비 ID인 경우 예외 발생
+     */
     @Transactional
     public Sensor saveSensor(SensorDto dto) {
         // 1. Zone 존재 여부 확인
@@ -46,30 +51,27 @@ public class SensorService {
             log.info("존재하지 않는 설비 ID");
 
         }
-        // 3. 센서 정보 저장
-        Sensor sens = new Sensor();
-        sens.setSensorId(dto.getSensorId());
-        sens.setSensorType(SensorType.valueOf(dto.getSensorType()));
-        sens.setZone(zone);
-        sens.setEquip(equip.get());
-        return repo.save(sens);
+        
+        // 3. DTO -> Entity 변환 후 저장
+        return repo.save(SensorDto.toEntity(dto, zone, equip.get()));
     }
 
-    // 센서 전체 리스트 조회
+    /**
+     * 모든 센서 정보를 조회합니다.
+     * @return 센서 정보 DTO 리스트
+     */
     public List<SensorDto> getAllSensors() {
         return repo.findAll().stream()
-            .map(s -> new SensorDto(
-                s.getSensorId(),
-                s.getSensorType().toString(),
-                s.getZone().getZoneId(),
-                s.getEquip().getEquipId(),
-                s.getSensorThres(),
-                s.getAllowVal()
-            ))
+            .map(SensorDto::fromEntity)
             .collect(Collectors.toList());
     }
 
-    // Sensor Table 업데이트
+    /**
+     * 센서 정보 중 임계치와 허용치를 업데이트합니다.
+     * @param sensorId 업데이트할 센서 ID
+     * @param dto 업데이트할 정보가 담긴 DTO
+     * @throws ResponseStatusException 존재하지 않는 센서 ID인 경우 예외 발생
+     */
     @Transactional
     public void updateSensor(String sensorId, SensorUpdateDto dto) {
         Sensor sensor = repo.findBySensorId(sensorId)
@@ -80,8 +82,12 @@ public class SensorService {
         repo.save(sensor);
     }
 
-    /** 이전에 repository를 직접 호출하던 부분을 메서드로 분리 */
-    // 센서 ID로 Sensor 엔티티 조회
+    /** 
+     * 센서 ID로 Sensor 엔티티를 조회합니다.
+     * @param sensorId 조회할 센서 ID
+     * @return 조회된 Sensor 엔티티
+     * @throws ResponseStatusException 존재하지 않는 센서 ID인 경우 예외 발생
+     */
     public Sensor getSensorById(String sensorId) {
         return repo.findBySensorId(sensorId)
             .orElseThrow(() -> new ResponseStatusException(

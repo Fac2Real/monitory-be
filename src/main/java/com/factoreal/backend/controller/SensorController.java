@@ -40,14 +40,14 @@ public class SensorController {
     // 전체 센서 리스트 조회 ( BE -> FE 센서ID, 센서종류 넘기기 )
     @GetMapping
     @Operation(summary = "전체 센서 리스트 조회", description = "전체 센서 정보를 조회하는 기능")
-    public ResponseEntity<List<SensorDto>> list() {
+    public ResponseEntity<List<SensorDto>> getAllSensors() {
         return ResponseEntity.ok(service.getAllSensors());
     }
 
     // DB Sensor Table 업데이트 ( FE -> BE 센서ID 매핑해서 센서목적, 위치, 임계치 업데이트 )
     @PostMapping("/{sensorId}")
     @Operation(summary = "센서 정보 업데이트", description = "센서ID 매핑해서 임계치(sensorThres)와 허용치(allowVal) 업데이트 (FE -> BE) ")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<Void> updateSensor(
             @PathVariable("sensorId") String sensorId,
             @RequestBody SensorUpdateDto dto) {
         service.updateSensor(sensorId, dto);

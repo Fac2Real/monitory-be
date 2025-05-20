@@ -51,14 +51,14 @@ public class ZoneController {
 
     @GetMapping
     @Operation(summary = "공간 리스트 조회", description = "등록된 모든 공간 정보를 조회합니다.")
-    public ResponseEntity<List<ZoneDto>> listZones() {
+    public ResponseEntity<List<ZoneDto>> getAllZones() {
         List<ZoneDto> list = service.getAllZones();
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/zoneitems")
     @Operation(summary = "공간별 설비,센서 데이터 조회", description = "등록된 공간들의 각 정보를 조회합니다.")
-    public ResponseEntity<List<ZoneItemDto>> listZoneItems() {
-        return ResponseEntity.ok(service.getZoneItems());
+    public ResponseEntity<List<ZoneItemDto>> getAllZoneItems() {
+        return ResponseEntity.ok(service.getAllZoneItems());
     }
 }

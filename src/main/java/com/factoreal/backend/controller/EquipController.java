@@ -43,7 +43,7 @@ public class EquipController {
     // 설비 목록 조회
     @GetMapping
     @Operation(summary = "설비 목록 조회", description = "등록된 모든 설비 정보를 조회합니다.")
-    public ResponseEntity<List<EquipDto>> listEquips() {
+    public ResponseEntity<List<EquipDto>> getAllEquips() {
         return ResponseEntity.ok(service.getAllEquips());
     }
 
