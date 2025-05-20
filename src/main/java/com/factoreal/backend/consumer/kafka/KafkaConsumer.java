@@ -331,7 +331,7 @@ public class KafkaConsumer {
         }
     }
 
-    private String buildControlMessage(
+    private String buildControlMessage(  // 제어 로직
             String type, double val, double thresh, double tol) {
         return switch (type.toLowerCase()) {
             case "temp" ->
