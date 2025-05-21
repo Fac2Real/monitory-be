@@ -1,13 +1,11 @@
-package com.factoreal.backend.consumer.kafka;
+package com.factoreal.backend.kafka;
 
 import com.factoreal.backend.dto.SensorKafkaDto;
 import com.factoreal.backend.dto.abnormalLog.LogType;
 import com.factoreal.backend.entity.AbnormalLog;
 import com.factoreal.backend.dto.SystemLogDto;
-import com.factoreal.backend.entity.Zone;
 import com.factoreal.backend.sender.WebSocketSender;
 import com.factoreal.backend.service.ZoneService;
-import com.factoreal.backend.entity.AbnormalLog;
 import com.factoreal.backend.service.AbnormalLogService;
 import com.factoreal.backend.strategy.NotificationStrategy;
 import com.factoreal.backend.strategy.NotificationStrategyFactory;
@@ -31,19 +29,15 @@ import java.time.ZonedDateTime;
 import java.time.ZoneId;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
-import java.util.Objects;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class KafkaConsumer {
+public class KafkaConsumerD {
 
     private final ObjectMapper objectMapper;
     private final WebSocketSender webSocketSender;
@@ -69,8 +63,8 @@ public class KafkaConsumer {
 
     // @KafkaListener(topics = {"EQUIPMENT", "ENVIRONMENT"}, groupId =
     // "monitory-consumer-group-1")
-    @KafkaListener(topics = { "EQUIPMENT",
-            "ENVIRONMENT" }, groupId = "${spring.kafka.consumer.group-id:danger-alert-group}")
+//    @KafkaListener(topics = { "EQUIPMENT",
+//            "ENVIRONMENT" }, groupId = "${spring.kafka.consumer.group-id:danger-alert-group}")
     public void consume(String message) {
 
         log.info("💡수신한 Kafka 메시지 : " + message);
@@ -87,6 +81,7 @@ public class KafkaConsumer {
                 // 비동기 ES 저장
                 // #################################
                 saveToElasticsearch(dto);
+
                 log.info("▶︎ 위험도 감지 start");
                 int dangerLevel = getDangerLevel(dto.getSensorType(), dto.getVal());
                 log.info("⚠️ 위험도 {} 센서 타입 : {} 감지됨. Zone: {}", dangerLevel, dto.getSensorType(), dto.getZoneId());

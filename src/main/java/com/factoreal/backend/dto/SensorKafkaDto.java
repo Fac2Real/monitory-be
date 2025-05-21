@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 // Kafka mapper용 DTO
+// Todo : Infra Flink dangerLevel 추가 후 변경 예정
 public class SensorKafkaDto {
     private String zoneId;
     private String equipId;

@@ -52,6 +52,7 @@ public class SensorService {
         sens.setSensorType(SensorType.valueOf(dto.getSensorType()));
         sens.setZone(zone);
         sens.setEquip(equip.get());
+        sens.setIsZone(dto.getIsZone());
         return repo.save(sens);
     }
 
@@ -64,7 +65,8 @@ public class SensorService {
                 s.getZone().getZoneId(),
                 s.getEquip().getEquipId(),
                 s.getSensorThres(),
-                s.getAllowVal()
+                s.getAllowVal(),
+                s.getIsZone()
             ))
             .collect(Collectors.toList());
     }
