@@ -7,7 +7,6 @@ import com.factoreal.backend.sender.WebSocketSender;
 import com.factoreal.backend.service.AbnormalLogService;
 import com.factoreal.backend.service.AlarmEventService;
 import com.factoreal.backend.service.AutoControlService;
-//import com.factoreal.backend.service.ElasticLogger;
 import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
 import com.factoreal.backend.kafka.strategy.enums.SensorType;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class SensorEventProcessor {
 
-//    private final ElasticLogger elasticLogger;        // Todo : grafana 도입 예정으로 삭제 예정
     private final AutoControlService autoControlService;
     private final AbnormalLogService abnormalLogService;
     private final AlarmEventService alarmEventService;
@@ -59,9 +57,6 @@ public class SensorEventProcessor {
                 SensorType sensorType = SensorType.getSensorType(dto.getSensorType());
                 RiskLevel riskLevel = RiskLevel.fromPriority(dangerLevel);
                 LogType logType = topicToLogType(topic);
-
-                // ElasticSearch 저장
-                // elasticLogger.save(dto);  // Todo : grafana 도입 예정으로 삭제 예정
 
                 // 자동 제어 메시지 판단 (Todo - 진행중)
                 autoControlService.evaluate(dto, dangerLevel);
