@@ -2,17 +2,16 @@ package com.factoreal.backend.service;
 
 import com.factoreal.backend.dto.WorkerDto;
 import com.factoreal.backend.entity.Worker;
-import com.factoreal.backend.entity.WorkerZone;
-import com.factoreal.backend.entity.WorkerZoneId;
 import com.factoreal.backend.entity.Zone;
+import com.factoreal.backend.entity.ZoneHist;
 import com.factoreal.backend.repository.WorkerRepository;
-import com.factoreal.backend.repository.WorkerZoneRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class WorkerServiceTest {
     private WorkerRepository workerRepository;
     
     @Mock
-    private WorkerZoneRepository workerZoneRepository;
+    private WorkerLocationService workerLocationService;
     
     @InjectMocks
     private WorkerService workerService;
@@ -34,7 +33,7 @@ public class WorkerServiceTest {
     private Worker worker1;
     private Worker worker2;
     private Zone zone1;
-    private WorkerZone workerZone1;
+    private ZoneHist zoneHist1;
 
     @BeforeEach
     public void setup() {
@@ -43,10 +42,10 @@ public class WorkerServiceTest {
         // 테스트용 작업자 데이터 생성
         worker1 = Worker.builder()
                 .workerId("20240101-1234")
-            .name("홍길동")
-            .phoneNumber("01012345678")
-            .email("hong@example.com")
-            .build();
+                .name("홍길동")
+                .phoneNumber("01012345678")
+                .email("hong@example.com")
+                .build();
         
         worker2 = Worker.builder()
                 .workerId("20240102-5678")
@@ -61,17 +60,15 @@ public class WorkerServiceTest {
                 .zoneName("테스트 공간")
                 .build();
                 
-        // 테스트용 WorkerZone 데이터 생성
-        WorkerZoneId id1 = new WorkerZoneId();
-        id1.setWorkerId("20240101-1234");
-        id1.setZoneId("zone1");
-        
-        workerZone1 = WorkerZone.builder()
-                .id(id1)
-            .worker(worker1)
-            .zone(zone1)
-                .manageYn(true)  // 관리자 여부 설정
-            .build();
+        // 테스트용 ZoneHist 데이터 생성
+        zoneHist1 = ZoneHist.builder()
+                .id(1L)
+                .worker(worker1)
+                .zone(zone1)
+                .startTime(LocalDateTime.now())
+                .endTime(null)
+                .existFlag(1)
+                .build();
     }
 
     @Test
@@ -104,7 +101,7 @@ public class WorkerServiceTest {
     @Test
     void testGetWorkersByZoneId() {
         // Mock 설정
-        when(workerZoneRepository.findByZoneZoneId("zone1")).thenReturn(Arrays.asList(workerZone1));
+        when(workerLocationService.getCurrentWorkersByZoneId("zone1")).thenReturn(Arrays.asList(zoneHist1));
         
         // 테스트 실행
         List<WorkerDto> workers = workerService.getWorkersByZoneId("zone1");
@@ -115,6 +112,6 @@ public class WorkerServiceTest {
         assertEquals("홍길동", workers.get(0).getName());
         assertEquals("01012345678", workers.get(0).getPhoneNumber());
         assertEquals("hong@example.com", workers.get(0).getEmail());
-        assertEquals(true, workers.get(0).getIsManager());  // 관리자 여부 검증
+        assertEquals(false, workers.get(0).getIsManager());  // 관리자 여부는 더 이상 ZoneHist에서 확인할 수 없음
     }
 }

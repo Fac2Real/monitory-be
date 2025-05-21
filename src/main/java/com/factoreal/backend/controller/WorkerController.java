@@ -18,7 +18,6 @@ import java.util.List;
 @Slf4j
 @Tag(name = "작업자 API", description = "작업자 조회 API")
 public class WorkerController {
-
     private final WorkerService workerService;
     
     @Operation(summary = "전체 작업자 목록 조회", description = "전체 작업자 목록을 조회합니다.")
@@ -29,7 +28,7 @@ public class WorkerController {
         return ResponseEntity.ok(workers);
     }
     
-    @Operation(summary = "공간별 작업자 목록 조회", description = "공간 ID를 기반으로 공간별 작업자 목록을 조회합니다.")
+    @Operation(summary = "공간별 작업자 목록 조회", description = "공간 ID를 기반으로 현재 해당 공간에 들어가있는 작업자 리스트를 조회합니다.")
     @GetMapping("/zone/{zoneId}")
     public ResponseEntity<List<WorkerDto>> getWorkersByZoneId(@PathVariable String zoneId) {
         log.info("공간 ID: {}의 작업자 목록 조회 요청", zoneId);
