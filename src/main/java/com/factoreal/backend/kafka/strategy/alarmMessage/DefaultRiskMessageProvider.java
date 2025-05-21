@@ -1,7 +1,7 @@
-package com.factoreal.backend.strategy;
+package com.factoreal.backend.kafka.strategy.alarmMessage;
 
-import com.factoreal.backend.strategy.enums.RiskLevel;
-import com.factoreal.backend.strategy.enums.SensorType;
+import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
+import com.factoreal.backend.kafka.strategy.enums.SensorType;
 import org.springframework.stereotype.Component;
 
 @Component

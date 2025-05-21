@@ -1,9 +1,7 @@
-package com.factoreal.backend.strategy.enums;
+package com.factoreal.backend.kafka.strategy.enums;
 
 import lombok.Builder;
 import lombok.Data;
-
-import java.sql.Timestamp;
 
 /**
  * Kafka Consumer에서 해당 객체 생성

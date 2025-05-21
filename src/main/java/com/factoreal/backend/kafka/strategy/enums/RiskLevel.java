@@ -1,4 +1,4 @@
-package com.factoreal.backend.strategy.enums;
+package com.factoreal.backend.kafka.strategy.enums;
 
 import lombok.Getter;
 

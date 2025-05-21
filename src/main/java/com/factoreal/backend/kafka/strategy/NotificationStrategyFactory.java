@@ -1,6 +1,7 @@
-package com.factoreal.backend.strategy;
+package com.factoreal.backend.kafka.strategy;
 
-import com.factoreal.backend.strategy.enums.RiskLevel;
+import com.factoreal.backend.kafka.strategy.alarmList.NotificationStrategy;
+import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

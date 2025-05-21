@@ -5,10 +5,11 @@ import com.factoreal.backend.dto.abnormalLog.LogType;
 import com.factoreal.backend.entity.AbnormalLog;
 import com.factoreal.backend.sender.WebSocketSender;
 import com.factoreal.backend.service.AbnormalLogService;
+import com.factoreal.backend.service.AlarmEventService;
 import com.factoreal.backend.service.AutoControlService;
 //import com.factoreal.backend.service.ElasticLogger;
-import com.factoreal.backend.strategy.enums.RiskLevel;
-import com.factoreal.backend.strategy.enums.SensorType;
+import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
+import com.factoreal.backend.kafka.strategy.enums.SensorType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class SensorEventProcessor {
 //    private final ElasticLogger elasticLogger;        // Todo : grafana 도입 예정으로 삭제 예정
     private final AutoControlService autoControlService;
     private final AbnormalLogService abnormalLogService;
-//    private final AlarmEventService alarmEventService;
+    private final AlarmEventService alarmEventService;
     private final WebSocketSender webSocketSender;
 
     /**
@@ -76,9 +77,10 @@ public class SensorEventProcessor {
                 // WebSocket 알림 전송
                 // 1. 히트맵 전송
                 webSocketSender.sendDangerLevel(dto.getZoneId(), dto.getSensorType(), dangerLevel);
-                // 2. 위험 알림 전송
+                // 2. 위험 알림 전송 -> 위험도별 Websocket + wearable + Slack(SMS 대체)
                 // Todo : (As-is) 전략 기반 startAlarm() 메서드 담당자 확인 필요
 //                webSocketSender.sendDangerAlarm(abnLog.toAlarmEventDto());
+                alarmEventService.startAlarm(dto,abnLog,dangerLevel);
                 // 3. 읽지 않은 수 전송
                 webSocketSender.sendUnreadCount(count);
 

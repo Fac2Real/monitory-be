@@ -1,7 +1,7 @@
-package com.factoreal.backend.strategy;
+package com.factoreal.backend.kafka.strategy.alarmList;
 
-import com.factoreal.backend.strategy.enums.AlarmEventDto;
-import com.factoreal.backend.strategy.enums.RiskLevel;
+import com.factoreal.backend.kafka.strategy.enums.AlarmEventDto;
+import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component("APP")
 public class AppPushNotificationStrategy implements NotificationStrategy {
 
-
+    // TODO FCM 전송 로직
     @Override
     public void send(AlarmEventDto alarmEventDto) {
         log.info("📲 App Push Notification Strategy.");
