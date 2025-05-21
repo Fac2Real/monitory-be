@@ -1,4 +1,4 @@
-package com.factoreal.backend.consumer.mqtt;
+package com.factoreal.backend.mqtt;
 
 import com.factoreal.backend.dto.EquipDto;
 import com.factoreal.backend.dto.SensorDto;
@@ -43,6 +43,7 @@ public class MqttService {
                 // mqtt에서 전달되는 뎁스를 따라가야함
                 JsonNode reported  = jsonNode.at("/current/state/reported");
                 log.info("📥 MQTT 수신 (topic: {}): {}", t, jsonNode);
+
                 String sensorId = reported.at("/sensorId").asText();
                 String type = reported.at("/type").asText();
                 String zoneId = reported.at("/zoneId").asText();
@@ -50,7 +51,9 @@ public class MqttService {
                 String equipIdVal = reported.path("equipId").asText(null);   // 키가 없으면 null
                 String equipId    = (equipIdVal == null || equipIdVal.isBlank()) ? null : equipIdVal;
 
-                SensorDto dto = new SensorDto(sensorId, type , zoneId, equipId, null, null);
+                Integer iszone = equipId.equals(zoneId) ? 1 : 0;
+
+                SensorDto dto = new SensorDto(sensorId, type , zoneId, equipId, null, null, iszone);
                 sensorService.saveSensor(dto); // 중복이면 예외 발생
                 log.info("✅ 센서 저장 완료: {}", sensorId);
             } catch (DataIntegrityViolationException e) {

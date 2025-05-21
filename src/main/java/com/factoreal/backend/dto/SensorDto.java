@@ -15,6 +15,7 @@ public class SensorDto { // BE -> FE 용 DTO
     private String equipId;
     private Double sensorThres; // 임계치
     private Double allowVal;     // 허용치
+    private Integer isZone;
 
     public static SensorDto fromEntity(Sensor sensor) {
         if (sensor == null) return null;
@@ -26,6 +27,7 @@ public class SensorDto { // BE -> FE 용 DTO
                 .equipId(sensor.getEquip().getEquipId())
                 .sensorThres(sensor.getSensorThres())
                 .allowVal(sensor.getAllowVal())
+                .isZone(sensor.getIsZone())
                 .build();
     }
 }

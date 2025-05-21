@@ -1,8 +1,8 @@
-package com.factoreal.backend.strategy;
+package com.factoreal.backend.kafka.strategy.alarmList;
 
 import com.factoreal.backend.sender.WebSocketSender;
-import com.factoreal.backend.strategy.enums.AlarmEventDto;
-import com.factoreal.backend.strategy.enums.RiskLevel;
+import com.factoreal.backend.kafka.strategy.enums.AlarmEventDto;
+import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,11 +10,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class WebSocketNotificationStrategy implements  NotificationStrategy{
+public class WebSocketNotificationStrategy implements NotificationStrategy {
     // SimpMessagingTemplate은 WebSocketConfig.java에 EnableWebSocketMessageBroker 어노테이션에 의해 빈이 등록됨.
     private final WebSocketSender webSocketSender;
 
     private static final String userId = "alarm-test";
+
     @Override
     public void send(AlarmEventDto alarmEventDto) {
         log.info("🌐WebSocket Notification Strategy");
