@@ -1,9 +1,13 @@
 package com.factoreal.backend.service;
 
 import com.factoreal.backend.dto.WorkerDto;
+import com.factoreal.backend.dto.ZoneManagerResponseDto;
 import com.factoreal.backend.entity.Worker;
+import com.factoreal.backend.entity.WorkerZone;
+import com.factoreal.backend.entity.Zone;
 import com.factoreal.backend.entity.ZoneHist;
 import com.factoreal.backend.repository.WorkerRepository;
+import com.factoreal.backend.repository.WorkerZoneRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,7 @@ import java.util.stream.Collectors;
 public class WorkerService {
     private final WorkerRepository workerRepository;
     private final WorkerLocationService workerLocationService;
+    private final WorkerZoneRepository workerZoneRepository;
 
     @Transactional(readOnly = true)
     public List<WorkerDto> getAllWorkers() {
@@ -42,6 +47,29 @@ public class WorkerService {
         return currentWorkers.stream()
                 .map(zoneHist -> WorkerDto.fromEntity(zoneHist.getWorker(), false))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 특정 공간의 담당자와 현재 위치 정보 조회
+     */
+    @Transactional(readOnly = true)
+    public ZoneManagerResponseDto getZoneManagerWithLocation(String zoneId) {
+        log.info("공간 ID: {}의 담당자 정보 조회", zoneId);
+        
+        // 1. 해당 공간의 담당자 조회 (manageYn = true)
+        WorkerZone zoneManager = workerZoneRepository.findByZoneZoneIdAndManageYnIsTrue(zoneId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공간의 담당자를 찾을 수 없습니다: " + zoneId));
+        
+        Worker manager = zoneManager.getWorker();
+        
+        // 2. 담당자의 현재 위치 조회 (existFlag = 1)
+        ZoneHist currentLocation = workerLocationService.getCurrentWorkerLocation(manager.getWorkerId());
+        
+        // 3. 현재 위치한 공간 정보 (없을 수 있음)
+        Zone currentZone = currentLocation != null ? currentLocation.getZone() : null;
+        
+        // 4. DTO 변환 및 반환
+        return ZoneManagerResponseDto.fromEntity(manager, currentZone);
     }
 }
 

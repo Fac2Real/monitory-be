@@ -69,4 +69,12 @@ public class WorkerLocationService {
     public List<ZoneHist> getCurrentWorkersByZoneId(String zoneId) {
         return zoneHistRepository.findByZone_ZoneIdAndExistFlag(zoneId, 1); // 해당 공간의 existFlag가 1인 모든 작업자 리스트
     }
+
+    /**
+     * 특정 작업자의 현재 위치 조회
+     */
+    @Transactional(readOnly = true)
+    public ZoneHist getCurrentWorkerLocation(String workerId) {
+        return zoneHistRepository.findByWorker_WorkerIdAndExistFlag(workerId, 1);
+    }
 }

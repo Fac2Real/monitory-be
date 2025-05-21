@@ -1,6 +1,7 @@
 package com.factoreal.backend.controller;
 
 import com.factoreal.backend.dto.WorkerDto;
+import com.factoreal.backend.dto.ZoneManagerResponseDto;
 import com.factoreal.backend.service.WorkerService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,5 +35,14 @@ public class WorkerController {
         log.info("공간 ID: {}의 작업자 목록 조회 요청", zoneId);
         List<WorkerDto> zoneWorkers = workerService.getWorkersByZoneId(zoneId);
         return ResponseEntity.ok(zoneWorkers);
+    }
+
+    @Operation(summary = "공간 담당자 정보 조회", 
+              description = "공간 ID를 기반으로 해당 공간의 담당자와 현재 위치 정보를 조회합니다.")
+    @GetMapping("/zone/{zoneId}/manager")
+    public ResponseEntity<ZoneManagerResponseDto> getZoneManager(@PathVariable String zoneId) {
+        log.info("공간 ID: {}의 담당자 정보 조회 요청", zoneId);
+        ZoneManagerResponseDto manager = workerService.getZoneManagerWithLocation(zoneId);
+        return ResponseEntity.ok(manager);
     }
 } 
