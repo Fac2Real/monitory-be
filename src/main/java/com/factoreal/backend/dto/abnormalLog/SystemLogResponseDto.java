@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SystemLogResponseDto {
     private String zoneId;
-    private String zoneName;
+    private String targetType;
     private String sensorType;
     private int dangerLevel;
     private double value;
@@ -25,7 +25,7 @@ public class SystemLogResponseDto {
     public static SystemLogResponseDto fromEntity(AbnormalLog abnormalLog) {
         return SystemLogResponseDto.builder()
                 .zoneId(abnormalLog.getZone().getZoneId())
-                .zoneName(abnormalLog.getZone().getZoneName())
+                .targetType(convertLogTypeToKorean(abnormalLog.getTargetType()))
                 .sensorType(abnormalLog.getTargetType().toString())
                 .dangerLevel(calculateDangerLevel(abnormalLog.getAbnormalType()))
                 .value(abnormalLog.getAbnVal())
@@ -33,6 +33,14 @@ public class SystemLogResponseDto {
                 .abnormalType(abnormalLog.getAbnormalType())
                 .targetId(abnormalLog.getTargetId())
                 .build();
+    }
+
+    private static String convertLogTypeToKorean(LogType logType) {
+        return switch (logType) {
+            case Sensor -> "환경";
+            case Worker -> "작업자";
+            case Equip -> "설비";
+        };
     }
 
     private static int calculateDangerLevel(String abnormalType) {
@@ -47,13 +55,13 @@ public class SystemLogResponseDto {
   "content": [
     {
       "zoneId": "zone123",
-      "zoneName": "작업장 A",
-      "sensorType": "TEMPERATURE",
-      "dangerLevel": 2,
-      "value": 35.5,
-      "timestamp": "2024-03-20T14:30:00",
-      "abnormalType": "온도 위험",
-      "targetId": "sensor456"
+      "targetType": "환경",  // 또는 "작업자", "설비"
+       "sensorType": "TEMPERATURE",
+       "dangerLevel": 2,
+       "value": 35.5,
+       "timestamp": "2024-03-20T14:30:00",
+       "abnormalType": "온도 위험",
+       "targetId": "sensor456"
     }
     // ... 더 많은 로그
   ],
