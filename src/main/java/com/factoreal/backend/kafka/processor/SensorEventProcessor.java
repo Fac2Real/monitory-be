@@ -53,7 +53,7 @@ public class SensorEventProcessor {
                 }
 
                 // 위험도 계산
-                int dangerLevel = getDangerLevel(dto.getSensorType(), dto.getVal()); // Flink dangerLevel 추가
+                int dangerLevel = dto.getDangerLevel();
                 SensorType sensorType = SensorType.getSensorType(dto.getSensorType());
                 RiskLevel riskLevel = RiskLevel.fromPriority(dangerLevel);
                 LogType logType = topicToLogType(topic);
