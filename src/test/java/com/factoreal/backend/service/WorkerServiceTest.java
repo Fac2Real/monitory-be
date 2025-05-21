@@ -43,10 +43,10 @@ public class WorkerServiceTest {
         // 테스트용 작업자 데이터 생성
         worker1 = Worker.builder()
                 .workerId("20240101-1234")
-                .name("홍길동")
-                .phoneNumber("01012345678")
-                .email("hong@example.com")
-                .build();
+            .name("홍길동")
+            .phoneNumber("01012345678")
+            .email("hong@example.com")
+            .build();
         
         worker2 = Worker.builder()
                 .workerId("20240102-5678")
@@ -68,10 +68,10 @@ public class WorkerServiceTest {
         
         workerZone1 = WorkerZone.builder()
                 .id(id1)
-                .worker(worker1)
-                .zone(zone1)
+            .worker(worker1)
+            .zone(zone1)
                 .manageYn(true)  // 관리자 여부 설정
-                .build();
+            .build();
     }
 
     @Test
@@ -91,14 +91,14 @@ public class WorkerServiceTest {
         assertEquals("홍길동", result.get(0).getName());
         assertEquals("01012345678", result.get(0).getPhoneNumber());
         assertEquals("hong@example.com", result.get(0).getEmail());
-        assertEquals(true, result.get(0).getIsManager());  // 서비스 로직에 따라 true로 설정
+        assertEquals(false, result.get(0).getIsManager());  // 기본값은 false
         
         // 두 번째 작업자 정보 확인
         assertEquals("20240102-5678", result.get(1).getWorkerId());
         assertEquals("김철수", result.get(1).getName());
         assertEquals("01087654321", result.get(1).getPhoneNumber());
         assertEquals("kim@example.com", result.get(1).getEmail());
-        assertEquals(true, result.get(1).getIsManager());  // 서비스 로직에 따라 true로 설정
+        assertEquals(false, result.get(1).getIsManager());  // 기본값은 false
     }
 
     @Test

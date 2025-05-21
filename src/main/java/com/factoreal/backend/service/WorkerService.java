@@ -28,22 +28,25 @@ public class WorkerService {
         
         return workers.stream()
                 .map(worker -> {
-                    // 기본값으로는 관리자임 (zoneId랑 매핑되어 있으니까)
-                    return WorkerDto.fromEntity(worker, true);
+                    // 기본값으로는 관리자가 아님
+                    return WorkerDto.fromEntity(worker, false);
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<WorkerDto> getWorkersByZoneId(String zoneId) {
-        log.info("공간 ID: {}의 작업자 목록 조회", zoneId);
-        List<WorkerZone> workerZones = workerZoneRepository.findByZoneZoneId(zoneId);
+
+    // TODO. 수정되어야 할 로직. 현재는 WorkerZone 테이블에서 공간id로 필터링 되는 모든 작업자를 끌고왔는데,
+    // 사실 현재 그 공간에서 실제로 작업하고 있는, 즉 들어
+    // public List<WorkerDto> getWorkersByZoneId(String zoneId) {
+    //     log.info("공간 ID: {}의 작업자 목록 조회", zoneId);
+    //     List<WorkerZone> workerZones = workerZoneRepository.findByZoneZoneId(zoneId);
         
-        return workerZones.stream()
-                .map(workerZone -> {
-                    Worker worker = workerZone.getWorker();
-                    Boolean isManager = workerZone.getManageYn();
-                    return WorkerDto.fromEntity(worker, isManager);
-                })
-                .collect(Collectors.toList());
-    }
+    //     return workerZones.stream()
+    //             .map(workerZone -> {
+    //                 Worker worker = workerZone.getWorker();
+    //                 Boolean isManager = workerZone.getManageYn();
+    //                 return WorkerDto.fromEntity(worker, isManager);
+    //             })
+    //             .collect(Collectors.toList());
+    // }
 } 
