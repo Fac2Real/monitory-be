@@ -12,4 +12,7 @@ public interface AbnLogRepository extends JpaRepository<AbnormalLog,Long> {
     long countByIsReadFalse(); // 읽지 않은 로그의 개수 반환
 
     Page<AbnormalLog> findAllByIsReadIsFalse(Pageable pageable);
+
+    // zoneId로 페이징 처리된 로그 조회
+    Page<AbnormalLog> findByZone_ZoneIdOrderByDetectedAtDesc(String zoneId, Pageable pageable);
 }

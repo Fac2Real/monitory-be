@@ -78,7 +78,7 @@ public class KafkaConsumer {
             SensorKafkaDto dto = objectMapper.readValue(message, SensorKafkaDto.class);
 
             // 시스템 로그 (위험도 변화 감지 -> 비동기 전송)
-            sendSystemLog(dto);
+            // sendSystemLog(dto);
 
             // 공간 센서일 때만 히트맵용 웹소켓 전송
             if (dto.getEquipId() != null && dto.getZoneId() != null && dto.getEquipId().equals(dto.getZoneId())) {
@@ -170,6 +170,7 @@ public class KafkaConsumer {
 
     // 공간(zone)별 위험도 변경 시 시스템 로그 전송
     @Async
+    @Deprecated
     public void sendSystemLog(SensorKafkaDto dto) {
         String zoneId = dto.getZoneId();
         int newLevel = getDangerLevel(dto.getSensorType(), dto.getVal());
