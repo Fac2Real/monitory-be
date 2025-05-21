@@ -3,6 +3,7 @@ package com.factoreal.backend.service;
 import com.factoreal.backend.dto.abnormalLog.AbnormalLogDto;
 import com.factoreal.backend.dto.abnormalLog.AbnormalPagingDto;
 import com.factoreal.backend.dto.abnormalLog.LogType;
+import com.factoreal.backend.dto.abnormalLog.SystemLogResponseDto;
 import com.factoreal.backend.dto.SensorKafkaDto;
 import com.factoreal.backend.entity.AbnormalLog;
 import com.factoreal.backend.entity.Zone;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -157,6 +160,16 @@ public class AbnormalLogService {
         Long count =  abnLogRepository.countByIsReadFalse();
 //        webSocketSender.sendUnreadCount(count);
         return count;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SystemLogResponseDto> findSystemLogsByZoneId(String zoneId, AbnormalPagingDto pagingDto) {
+        log.info("공간 ID: {}의 시스템 로그 조회", zoneId);
+        Pageable pageable = getPageable(pagingDto);
+        
+        // zoneId로 직접 필터링된 로그 조회
+        Page<AbnormalLog> logs = abnLogRepository.findByZone_ZoneIdOrderByDetectedAtDesc(zoneId, pageable);
+        return logs.map(SystemLogResponseDto::fromEntity);
     }
 
     private Pageable getPageable(AbnormalPagingDto abnormalPagingDto){

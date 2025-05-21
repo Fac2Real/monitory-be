@@ -30,7 +30,8 @@ public class AbnormalLog {
     private String targetId; // 고유 ID : 센서ID, WorkerID, EquipID
 
     @Column(name = "abnormal_type", length = 100)
-    private String abnormalType; // 이상 유형 : (예: 심박수 이상, 온도 초과, 진동 이상 등)
+    private String abnormalType; // 이상 유형 : (예: 심박수 위험, 온도 초과 위험, 진동 주의 등)
+                                 // 이상은 위험과 주의로 구분이 애매하므로 명확한 표현 필요
 
     @Column(name = "abn_val")
     private Double abnVal; // 이상치 값
