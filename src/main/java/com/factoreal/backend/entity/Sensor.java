@@ -1,6 +1,6 @@
 package com.factoreal.backend.entity;
 
-import com.factoreal.backend.strategy.enums.SensorType;
+import com.factoreal.backend.kafka.strategy.enums.SensorType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

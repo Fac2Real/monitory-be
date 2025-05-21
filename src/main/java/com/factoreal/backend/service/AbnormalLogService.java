@@ -8,17 +8,19 @@ import com.factoreal.backend.entity.AbnormalLog;
 import com.factoreal.backend.entity.Zone;
 import com.factoreal.backend.repository.AbnLogRepository;
 import com.factoreal.backend.sender.WebSocketSender;
-import com.factoreal.backend.strategy.RiskMessageProvider;
-import com.factoreal.backend.strategy.enums.RiskLevel;
-import com.factoreal.backend.strategy.enums.SensorType;
+import com.factoreal.backend.kafka.strategy.alarmMessage.RiskMessageProvider;
+import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
+import com.factoreal.backend.kafka.strategy.enums.SensorType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -35,12 +37,19 @@ public class AbnormalLogService {
     // 알람 객체를 받아와서 로그 객체 생성.
     @Transactional(rollbackFor = Exception.class)
     public AbnormalLog saveAbnormalLogFromKafkaDto(
-            SensorKafkaDto sensorKafkaDto,
-            SensorType sensorType,
-            RiskLevel riskLevel,
-            LogType targetType
-    ) throws Exception{
+                                                        SensorKafkaDto sensorKafkaDto,
+                                                        SensorType sensorType,
+                                                        RiskLevel riskLevel,
+                                                        LogType targetType
+                                                ) throws Exception{
+
+
         Zone zone = zoneService.getZone(sensorKafkaDto.getZoneId());
+
+
+        if (zone == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 공간 ID: " + sensorKafkaDto.getZoneId());
+        }
 
         log.info(">>>>>> zone : {} " ,zone);
 
@@ -146,7 +155,7 @@ public class AbnormalLogService {
     // 읽지 않은 알람이 몇개인지 반환
     public Long readRequired(){
         Long count =  abnLogRepository.countByIsReadFalse();
-        webSocketSender.sendUnreadCount(count);
+//        webSocketSender.sendUnreadCount(count);
         return count;
     }
 

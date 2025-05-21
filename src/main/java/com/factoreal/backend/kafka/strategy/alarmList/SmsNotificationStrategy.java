@@ -1,8 +1,8 @@
-package com.factoreal.backend.strategy;
+package com.factoreal.backend.kafka.strategy.alarmList;
 
-import com.factoreal.backend.strategy.enums.AlarmEventDto;
+import com.factoreal.backend.kafka.strategy.enums.AlarmEventDto;
 import com.factoreal.backend.entity.Worker;
-import com.factoreal.backend.strategy.enums.RiskLevel;
+import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
 import com.factoreal.backend.repository.WorkerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ public class SmsNotificationStrategy implements NotificationStrategy {
     private final WorkerRepository workerRepository;
 
     private static final String userId = "alarm-test";
+    // TODO Seoul 리전에 SMS 지원이 안되기에 Slack으로 변경
     @Override
     public void send(AlarmEventDto alarmEventDto) {
         log.info("📬 SMS Notification Strategy.");
