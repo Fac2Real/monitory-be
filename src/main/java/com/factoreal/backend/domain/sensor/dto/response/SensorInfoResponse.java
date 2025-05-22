@@ -1,4 +1,4 @@
-package com.factoreal.backend.domain.sensor.dto;
+package com.factoreal.backend.domain.sensor.dto.response;
 
 import com.factoreal.backend.domain.sensor.entity.Sensor;
 import lombok.*;
@@ -8,19 +8,19 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SensorDto { // BE -> FE 용 DTO
-    private String sensorId; // 센서ID
-    private String sensorType; // 센서종류
-    private String zoneId; // zoneId 저장
+public class SensorInfoResponse {
+    private String sensorId;
+    private String sensorType;
+    private String zoneId;
     private String equipId;
-    private Double sensorThres; // 임계치
+    private Double sensorThres;  // 임계치
     private Double allowVal;     // 허용치
     private Integer isZone;
 
-    public static SensorDto fromEntity(Sensor sensor) {
+    public static SensorInfoResponse from (Sensor sensor) {
         if (sensor == null) return null;
 
-        return SensorDto.builder()
+        return SensorInfoResponse.builder()
                 .sensorId(sensor.getSensorId())
                 .sensorType(sensor.getSensorType().toString())
                 .zoneId(sensor.getZone().getZoneId())

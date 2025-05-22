@@ -4,14 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.factoreal.backend.domain.sensor.dto.request.SensorCreateRequest;
+import com.factoreal.backend.domain.sensor.dto.response.SensorInfoResponse;
+import com.factoreal.backend.domain.sensor.dto.request.SensorUpdateRequest;
 import com.factoreal.backend.global.kafka.strategy.enums.SensorType;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.factoreal.backend.domain.sensor.dto.SensorDto;
-import com.factoreal.backend.domain.sensor.dto.SensorUpdateDto;
 import com.factoreal.backend.domain.equip.entity.Equip;
 import com.factoreal.backend.domain.sensor.entity.Sensor;
 import com.factoreal.backend.domain.zone.entity.Zone;
@@ -26,40 +27,27 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class SensorService {
-    private final SensorRepository repo;
-    private final ZoneRepository zoneRepo;
-    private final EquipRepository equipRepo;
+    private final SensorRepository sensorRepository;
+    private final ZoneRepository zoneRepository;
+    private final EquipRepository equipRepository;
 
-    // 센서 등록
     @Transactional
-    public Sensor saveSensor(SensorDto dto) {
-        // 1. Zone 존재 여부 확인
-        Zone zone = zoneRepo.findById(dto.getZoneId())
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "존재하지 않는 공간 ID: " + dto.getZoneId()));
+    public Sensor saveSensor(SensorCreateRequest dto) {
+        Zone zone = getZoneById(dto.getZoneId());
+        Equip equip = getEquipById(dto.getEquipId());
 
-        // 2. Equip 존재 여부 확인
-        Optional<Equip> equip = Optional.ofNullable(equipRepo.findByEquipId(dto.getEquipId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "존재하지 않는 설비 ID: " + dto.getEquipId())));
-        if(equip.isEmpty()) {
-            log.info("존재하지 않는 설비 ID");
-
-        }
-        // 3. 센서 정보 저장
         Sensor sens = new Sensor();
         sens.setSensorId(dto.getSensorId());
         sens.setSensorType(SensorType.valueOf(dto.getSensorType()));
         sens.setZone(zone);
-        sens.setEquip(equip.get());
+        sens.setEquip(equip);
         sens.setIsZone(dto.getIsZone());
-        return repo.save(sens);
+        return sensorRepository.save(sens);
     }
 
-    // 센서 전체 리스트 조회
-    public List<SensorDto> getAllSensors() {
-        return repo.findAll().stream()
-            .map(s -> new SensorDto(
+    public List<SensorInfoResponse> getAllSensors() {
+        return sensorRepository.findAll().stream()
+            .map(s -> new SensorInfoResponse(
                 s.getSensorId(),
                 s.getSensorType().toString(),
                 s.getZone().getZoneId(),
@@ -71,22 +59,27 @@ public class SensorService {
             .collect(Collectors.toList());
     }
 
-    // Sensor Table 업데이트
     @Transactional
-    public void updateSensor(String sensorId, SensorUpdateDto dto) {
-        Sensor sensor = repo.findBySensorId(sensorId)
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "존재하지 않는 센서 ID: " + sensorId));
+    public void updateSensor(String sensorId, SensorUpdateRequest dto) {
+        Sensor sensor = getSensorById(sensorId);
         sensor.setSensorThres(dto.getSensorThres());
         sensor.setAllowVal(dto.getAllowVal());
-        repo.save(sensor);
+        sensorRepository.save(sensor);
     }
 
-    /** 이전에 repository를 직접 호출하던 부분을 메서드로 분리 */
-    // 센서 ID로 Sensor 엔티티 조회
+    private Zone getZoneById(String zoneId) {
+        return zoneRepository.findById(zoneId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "존재하지 않는 공간 ID: " + zoneId));
+    }
+    private Equip getEquipById(String eqiuipId) {
+        return equipRepository.findById(eqiuipId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "존재하지 않는 센서 ID: " + eqiuipId));
+    }
     public Sensor getSensorById(String sensorId) {
-        return repo.findBySensorId(sensorId)
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "존재하지 않는 센서 ID: " + sensorId));
+        return sensorRepository.findById(sensorId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "존재하지 않는 센서 ID: " + sensorId));
     }
 }

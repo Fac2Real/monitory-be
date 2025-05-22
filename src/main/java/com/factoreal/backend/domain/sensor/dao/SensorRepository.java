@@ -10,6 +10,5 @@ import com.factoreal.backend.domain.sensor.entity.Sensor;
 import java.util.List;
 
 public interface SensorRepository extends JpaRepository<Sensor, String> {
-    Optional<Sensor> findBySensorId(String sensorId);
     List<Sensor> findByZone(Zone zone);
 }

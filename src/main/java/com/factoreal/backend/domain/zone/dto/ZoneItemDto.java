@@ -1,7 +1,6 @@
 package com.factoreal.backend.domain.zone.dto;
 
-
-import com.factoreal.backend.domain.sensor.dto.SensorDto;
+import com.factoreal.backend.domain.sensor.dto.response.SensorInfoResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
@@ -13,7 +12,7 @@ public class ZoneItemDto {
     private String title;
 
     @JsonProperty("env_sensor")
-    private List<SensorDto> envSensor;
+    private List<SensorInfoResponse> envSensor;
     @JsonProperty("facility")
     private List<FacilityDto> facility;
 }

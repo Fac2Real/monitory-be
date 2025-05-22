@@ -1,6 +1,6 @@
 package com.factoreal.backend.domain.zone.dto;
 
-import com.factoreal.backend.domain.sensor.dto.SensorDto;
+import com.factoreal.backend.domain.sensor.dto.response.SensorInfoResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -18,5 +18,5 @@ public class FacilityDto {
     @JsonProperty("id")
     private String id;
     @JsonProperty("fac_sensor")
-    private List<SensorDto> facSensor;
+    private List<SensorInfoResponse> facSensor;
 }

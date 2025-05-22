@@ -1,8 +1,8 @@
 package com.factoreal.backend.global.config;
 
+import com.factoreal.backend.domain.sensor.dto.request.SensorCreateRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.factoreal.backend.domain.sensor.dto.SensorDto;
 import com.factoreal.backend.domain.sensor.application.SensorService;
 import com.factoreal.backend.global.util.SslUtil;
 import jakarta.annotation.PostConstruct;
@@ -86,7 +86,7 @@ public class AwsMqttListener {
                 String sensorId = jsonNode.at("/id").asText();
                 String type = jsonNode.at("/type").asText();
 //                SensorDto dto = new SensorDto(sensorId, type);
-                SensorDto dto = new SensorDto();
+                SensorCreateRequest dto = new SensorCreateRequest();
                 sensorService.saveSensor(dto); // 중복이면 예외 발생
                 log.info("✅ 센서 저장 완료: {}", sensorId);
             } catch (DataIntegrityViolationException e) {

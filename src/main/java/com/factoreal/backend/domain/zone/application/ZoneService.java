@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import com.factoreal.backend.domain.equip.application.EquipService;
 import com.factoreal.backend.domain.equip.dto.response.EquipDto;
-import com.factoreal.backend.domain.sensor.dto.SensorDto;
+import com.factoreal.backend.domain.sensor.dto.response.SensorInfoResponse;
 import com.factoreal.backend.domain.zone.dto.FacilityDto;
 import com.factoreal.backend.domain.zone.dto.ZoneDto;
 import com.factoreal.backend.domain.zone.dto.ZoneItemDto;
@@ -106,8 +106,8 @@ public class ZoneService {
                             .toList();
 
                     // 1) Sensor 엔티티 → SensorDto 변환
-                    List<SensorDto> envSensorDtos = envSensors.stream()      // List<Sensor>
-                            .map(SensorDto::fromEntity)                      // Sensor → SensorDto
+                    List<SensorInfoResponse> envSensorDtos = envSensors.stream()      // List<Sensor>
+                            .map(SensorInfoResponse::from)                      // Sensor → SensorDto
                             .toList();
 
 
@@ -116,10 +116,10 @@ public class ZoneService {
                             .toList();   // empty이름을 가진 설비(환경센서)는 설비 목록에서 제외하기
 
                     // 설비 센서 그룹핑
-                    Map<String, List<SensorDto>> facGroup = sensors.stream()
+                    Map<String, List<SensorInfoResponse>> facGroup = sensors.stream()
                             .filter(s -> !Objects.equals(s.getZone().getZoneId(), s.getEquip().getEquipId()))
-                            .map(SensorDto::fromEntity)                 // ★ Sensor → SensorDto
-                            .collect(Collectors.groupingBy(SensorDto::getEquipId));
+                            .map(SensorInfoResponse::from)                 // ★ Sensor → SensorDto
+                            .collect(Collectors.groupingBy(SensorInfoResponse::getEquipId));
 
                     List<FacilityDto> facilities = equips.stream()
                             .map(entry -> {
@@ -127,7 +127,7 @@ public class ZoneService {
                                 String equipId = entry.getEquipId();
                                 String equipName = equipRepo.findEquipNameByEquipId(equipId); // 1-row 조회
 
-                                List<SensorDto> facSensors = facGroup.getOrDefault(equipId, List.of());
+                                List<SensorInfoResponse> facSensors = facGroup.getOrDefault(equipId, List.of());
 
                                 return FacilityDto.builder()
                                         .name(equipName)
