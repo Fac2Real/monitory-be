@@ -1,4 +1,4 @@
-package com.factoreal.backend.domain.equip.dto;
+package com.factoreal.backend.domain.equip.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

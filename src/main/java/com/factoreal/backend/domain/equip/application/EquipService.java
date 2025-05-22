@@ -1,8 +1,8 @@
 package com.factoreal.backend.domain.equip.application;
 
-import com.factoreal.backend.domain.equip.dto.EquipCreateRequest;
-import com.factoreal.backend.domain.equip.dto.EquipDto;
-import com.factoreal.backend.domain.equip.dto.EquipUpdateDto;
+import com.factoreal.backend.domain.equip.dto.request.EquipCreateRequest;
+import com.factoreal.backend.domain.equip.dto.response.EquipDto;
+import com.factoreal.backend.domain.equip.dto.request.EquipUpdateDto;
 import com.factoreal.backend.domain.equip.entity.Equip;
 import com.factoreal.backend.domain.zone.entity.Zone;
 import com.factoreal.backend.domain.equip.dao.EquipRepository;

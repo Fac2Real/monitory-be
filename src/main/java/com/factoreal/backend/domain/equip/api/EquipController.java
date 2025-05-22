@@ -1,8 +1,8 @@
 package com.factoreal.backend.domain.equip.api;
 
-import com.factoreal.backend.domain.equip.dto.EquipCreateRequest;
-import com.factoreal.backend.domain.equip.dto.EquipDto;
-import com.factoreal.backend.domain.equip.dto.EquipUpdateDto;
+import com.factoreal.backend.domain.equip.dto.request.EquipCreateRequest;
+import com.factoreal.backend.domain.equip.dto.response.EquipDto;
+import com.factoreal.backend.domain.equip.dto.request.EquipUpdateDto;
 import com.factoreal.backend.domain.equip.application.EquipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +21,6 @@ import java.util.List;
 public class EquipController {
     private final EquipService service;
 
-    // 설비 등록
     @PostMapping
     @Operation(summary = "설비 등록", description = "UI로부터 설비명과 공간명을 입력받아 고유 ID를 생성하여 설비 정보를 등록합니다.")
     public ResponseEntity<EquipDto> createEquip(@Valid @RequestBody EquipCreateRequest req) {
@@ -29,7 +28,6 @@ public class EquipController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // 설비 정보 수정
     @PostMapping("/{equipId}")
     @Operation(summary = "설비 정보 수정", description = "기존 설비의 이름을 수정합니다.")
     public ResponseEntity<EquipDto> updateEquip(
@@ -40,7 +38,6 @@ public class EquipController {
         return ResponseEntity.ok(updated);
     }
 
-    // 설비 목록 조회
     @GetMapping
     @Operation(summary = "설비 목록 조회", description = "등록된 모든 설비 정보를 조회합니다.")
     public ResponseEntity<List<EquipDto>> listEquips() {

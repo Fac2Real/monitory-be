@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.factoreal.backend.domain.equip.application.EquipService;
-import com.factoreal.backend.domain.equip.dto.EquipDto;
+import com.factoreal.backend.domain.equip.dto.response.EquipDto;
 import com.factoreal.backend.domain.sensor.dto.SensorDto;
 import com.factoreal.backend.domain.zone.dto.FacilityDto;
 import com.factoreal.backend.domain.zone.dto.ZoneDto;
