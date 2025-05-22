@@ -33,7 +33,11 @@ public class WorkerService {
         log.info("전체 작업자 목록 조회");
         List<Worker> workers = workerRepository.findAll();
         return workers.stream()
-                .map(worker -> WorkerDto.fromEntity(worker, false))
+                .map(worker -> {
+                    // 해당 작업자가 어떤 공간의 담당자인지 확인
+                    boolean isManager = workerZoneRepository.findByWorkerWorkerIdAndManageYnIsTrue(worker.getWorkerId()).isPresent();
+                    return WorkerDto.fromEntity(worker, isManager);
+                })
                 .collect(Collectors.toList());
     }
 
