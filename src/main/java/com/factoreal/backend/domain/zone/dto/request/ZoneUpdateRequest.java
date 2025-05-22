@@ -1,4 +1,4 @@
-package com.factoreal.backend.domain.zone.dto;
+package com.factoreal.backend.domain.zone.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ZoneDto {
-    private String zoneId;
-    private String zoneName;
+public class ZoneUpdateRequest {
+    private String zoneName; // 수정할 공간명
 }

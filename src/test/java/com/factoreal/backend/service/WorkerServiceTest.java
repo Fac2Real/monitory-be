@@ -5,7 +5,7 @@ import com.factoreal.backend.domain.worker.dto.WorkerDto;
 import com.factoreal.backend.domain.worker.entity.Worker;
 import com.factoreal.backend.domain.zone.application.WorkerLocationService;
 import com.factoreal.backend.domain.zone.entity.Zone;
-import com.factoreal.backend.domain.zone.dto.ZoneHist;
+import com.factoreal.backend.domain.zone.entity.ZoneHist;
 import com.factoreal.backend.domain.worker.dao.WorkerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,12 +1,11 @@
 package com.factoreal.backend.domain.abnormalLog.application;
 
-import com.factoreal.backend.domain.zone.application.ZoneService;
 import com.factoreal.backend.domain.abnormalLog.dto.AbnormalLogDto;
 import com.factoreal.backend.domain.abnormalLog.dto.AbnormalPagingDto;
 import com.factoreal.backend.domain.abnormalLog.dto.LogType;
-import com.factoreal.backend.domain.abnormalLog.dto.SystemLogResponseDto;
 import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
 import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
+import com.factoreal.backend.domain.zone.dao.ZoneRepository;
 import com.factoreal.backend.domain.zone.entity.Zone;
 import com.factoreal.backend.domain.abnormalLog.dao.AbnLogRepository;
 import com.factoreal.backend.global.sender.WebSocketSender;
@@ -31,7 +30,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AbnormalLogService {
     private final AbnLogRepository abnLogRepository;
-    private final ZoneService zoneService;
+    private final ZoneRepository zoneRepository;
     private final RiskMessageProvider riskMessageProvider;
     private final ObjectMapper objectMapper;
     private final WebSocketSender webSocketSender;
@@ -46,7 +45,7 @@ public class AbnormalLogService {
                                                 ) throws Exception{
 
 
-        Zone zone = zoneService.getZone(sensorKafkaDto.getZoneId());
+        Zone zone = zoneRepository.findByZoneId(sensorKafkaDto.getZoneId());
 
 
         if (zone == null) {
@@ -159,16 +158,6 @@ public class AbnormalLogService {
         Long count =  abnLogRepository.countByIsReadFalse();
 //        webSocketSender.sendUnreadCount(count);
         return count;
-    }
-
-    @Transactional(readOnly = true)
-    public Page<SystemLogResponseDto> findSystemLogsByZoneId(String zoneId, AbnormalPagingDto pagingDto) {
-        log.info("공간 ID: {}의 시스템 로그 조회", zoneId);
-        Pageable pageable = getPageable(pagingDto);
-        
-        // zoneId로 직접 필터링된 로그 조회
-        Page<AbnormalLog> logs = abnLogRepository.findByZone_ZoneIdOrderByDetectedAtDesc(zoneId, pageable);
-        return logs.map(SystemLogResponseDto::fromEntity);
     }
 
     private Pageable getPageable(AbnormalPagingDto abnormalPagingDto){

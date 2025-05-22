@@ -3,6 +3,7 @@ package com.factoreal.backend.global.kafka;
 import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
 import com.factoreal.backend.domain.abnormalLog.dto.LogType;
 import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
+import com.factoreal.backend.domain.zone.dao.ZoneRepository;
 import com.factoreal.backend.domain.zone.dto.SystemLogDto;
 import com.factoreal.backend.global.sender.WebSocketSender;
 import com.factoreal.backend.domain.zone.application.ZoneService;
@@ -40,6 +41,7 @@ public class KafkaConsumerD {
 
     private final ObjectMapper objectMapper;
     private final WebSocketSender webSocketSender;
+    private final ZoneRepository zoneRepository;
     private final ZoneService zoneService;
 
     // 알람 푸시 용
@@ -259,7 +261,7 @@ public class KafkaConsumerD {
 
         String source = data.getZoneId().equals(data.getEquipId()) ? "공간 센서" : "설비 센서";
         SensorType sensorType = SensorType.valueOf(data.getSensorType());
-        String zoneName = zoneService.getZone(data.getZoneId()).getZoneName();
+        String zoneName = zoneRepository.findByZoneId(data.getZoneId()).getZoneName();
         // 알람 이벤트 객체 반환
         return AlarmEventDto.builder()
                 .eventId(abnormalLog.getId())

@@ -1,10 +1,10 @@
 package com.factoreal.backend.domain.zone.application;
 
 import com.factoreal.backend.domain.worker.entity.Worker;
+import com.factoreal.backend.domain.zone.dao.ZoneHistoryRepository;
 import com.factoreal.backend.domain.zone.entity.Zone;
-import com.factoreal.backend.domain.zone.dto.ZoneHist;
+import com.factoreal.backend.domain.zone.entity.ZoneHist;
 import com.factoreal.backend.domain.worker.dao.WorkerRepository;
-import com.factoreal.backend.domain.zone.dao.ZoneHistRepository;
 import com.factoreal.backend.domain.zone.dao.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +17,9 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class WorkerLocationService {
+public class ZoneHistoryService {
     
-    private final ZoneHistRepository zoneHistRepository;
+    private final ZoneHistoryRepository zoneHistRepository;
     private final WorkerRepository workerRepository;
     private final ZoneRepository zoneRepository;
 

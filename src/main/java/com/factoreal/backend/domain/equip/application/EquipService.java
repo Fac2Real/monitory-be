@@ -7,12 +7,12 @@ import com.factoreal.backend.domain.equip.entity.Equip;
 import com.factoreal.backend.domain.zone.entity.Zone;
 import com.factoreal.backend.domain.equip.dao.EquipRepository;
 import com.factoreal.backend.domain.zone.dao.ZoneRepository;
-import com.factoreal.backend.global.util.EquipIdGenerator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import com.factoreal.backend.global.util.IdGenerator;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +47,7 @@ public class EquipService {
             HttpStatus.BAD_REQUEST, "존재하지 않는 공간명: " + req.getZoneName()));
     
         // 2. 고유한 설비ID 생성
-        String equipId = EquipIdGenerator.generateEquipId();
+        String equipId = IdGenerator.generateId();
 
         // 3. 설비 정보 저장
         Equip equip = new Equip(equipId, req.getEquipName(), zone);

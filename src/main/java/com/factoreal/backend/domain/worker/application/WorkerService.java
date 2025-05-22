@@ -1,14 +1,14 @@
 package com.factoreal.backend.domain.worker.application;
 
 import com.factoreal.backend.domain.worker.dto.WorkerDto;
+import com.factoreal.backend.domain.zone.application.ZoneHistoryService;
 import com.factoreal.backend.domain.zone.dto.ZoneManagerResponseDto;
 import com.factoreal.backend.domain.worker.entity.Worker;
 import com.factoreal.backend.domain.workerZone.entity.WorkerZone;
 import com.factoreal.backend.domain.zone.entity.Zone;
-import com.factoreal.backend.domain.zone.dto.ZoneHist;
+import com.factoreal.backend.domain.zone.entity.ZoneHist;
 import com.factoreal.backend.domain.worker.dao.WorkerRepository;
 import com.factoreal.backend.domain.workerZone.dao.WorkerZoneRepository;
-import com.factoreal.backend.domain.zone.application.WorkerLocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WorkerService {
     private final WorkerRepository workerRepository;
-    private final WorkerLocationService workerLocationService;
+    private final ZoneHistoryService zoneHistoryService;
     private final WorkerZoneRepository workerZoneRepository;
 
     @Transactional(readOnly = true)
@@ -42,7 +42,7 @@ public class WorkerService {
         log.info("공간 ID: {}의 현재 작업자 목록 조회", zoneId);
         
         // 현재 해당 공간에 있는 작업자 이력 조회 (existFlag = 1)
-        List<ZoneHist> currentWorkers = workerLocationService.getCurrentWorkersByZoneId(zoneId);
+        List<ZoneHist> currentWorkers = zoneHistoryService.getCurrentWorkersByZoneId(zoneId);
         
         // ZoneHist에서 Worker 정보만 추출하여 DTO로 변환
         return currentWorkers.stream()
@@ -64,7 +64,7 @@ public class WorkerService {
         Worker manager = zoneManager.getWorker();
         
         // 2. 담당자의 현재 위치 조회 (existFlag = 1)
-        ZoneHist currentLocation = workerLocationService.getCurrentWorkerLocation(manager.getWorkerId());
+        ZoneHist currentLocation = zoneHistoryService.getCurrentWorkerLocation(manager.getWorkerId());
         
         // 3. 현재 위치한 공간 정보 (없을 수 있음)
         Zone currentZone = currentLocation != null ? currentLocation.getZone() : null;

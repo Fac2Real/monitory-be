@@ -3,6 +3,7 @@ package com.factoreal.backend.service;
 import com.factoreal.backend.domain.zone.application.ZoneService;
 import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
 import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
+import com.factoreal.backend.domain.zone.dao.ZoneRepository;
 import com.factoreal.backend.global.kafka.strategy.alarmList.NotificationStrategy;
 import com.factoreal.backend.global.kafka.strategy.NotificationStrategyFactory;
 import com.factoreal.backend.global.kafka.strategy.enums.AlarmEventDto;
@@ -21,7 +22,7 @@ public class AlarmEventService {
 
     // 위험 레벨별 알람 전략을 가져오기 위한 팩토리 서비스
     private final NotificationStrategyFactory notificationStrategyFactory;
-    private final ZoneService zoneService;
+    private final ZoneRepository zoneRepository;
     // Todo 추후 Flink에서 SensorKafkaDto에 dangerLevel을 포함하면 제거
     public void startAlarm(SensorKafkaDto sensorData, AbnormalLog abnormalLog, int dangerLevel) {
         AlarmEventDto alarmEventDto;
@@ -51,7 +52,7 @@ public class AlarmEventService {
 
         String source = data.getZoneId().equals(data.getEquipId()) ? "공간 센서" : "설비 센서";
         SensorType sensorType = SensorType.valueOf(data.getSensorType());
-        String zoneName = zoneService.getZone(data.getZoneId()).getZoneName();
+        String zoneName = zoneRepository.findByZoneId(data.getZoneId()).getZoneName();
         // 알람 이벤트 객체 반환
         return AlarmEventDto.builder()
                 .eventId(abnormalLog.getId())

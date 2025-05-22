@@ -1,7 +1,6 @@
-package com.factoreal.backend.domain.zone.dto;
+package com.factoreal.backend.domain.zone.entity;
 
 import com.factoreal.backend.domain.worker.entity.Worker;
-import com.factoreal.backend.domain.zone.entity.Zone;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,5 +1,6 @@
-package com.factoreal.backend.domain.abnormalLog.dto;
+package com.factoreal.backend.domain.zone.dto.response;
 
+import com.factoreal.backend.domain.abnormalLog.dto.LogType;
 import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SystemLogResponseDto {
+public class ZoneLogResponse {
     private String zoneId;
     private String targetType;
     private String sensorType;
@@ -22,8 +23,8 @@ public class SystemLogResponseDto {
     private String abnormalType;
     private String targetId;
 
-    public static SystemLogResponseDto fromEntity(AbnormalLog abnormalLog) {
-        return SystemLogResponseDto.builder()
+    public static ZoneLogResponse from (AbnormalLog abnormalLog) {
+        return ZoneLogResponse.builder()
                 .zoneId(abnormalLog.getZone().getZoneId())
                 .targetType(convertLogTypeToKorean(abnormalLog.getTargetType()))
                 .sensorType(abnormalLog.getTargetType().toString())
