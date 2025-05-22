@@ -1,10 +1,12 @@
 package com.factoreal.backend.service;
 
-import com.factoreal.backend.dto.WorkerDto;
-import com.factoreal.backend.entity.Worker;
-import com.factoreal.backend.entity.Zone;
-import com.factoreal.backend.entity.ZoneHist;
-import com.factoreal.backend.repository.WorkerRepository;
+import com.factoreal.backend.domain.worker.application.WorkerService;
+import com.factoreal.backend.domain.worker.dto.WorkerDto;
+import com.factoreal.backend.domain.worker.entity.Worker;
+import com.factoreal.backend.domain.zone.application.WorkerLocationService;
+import com.factoreal.backend.domain.zone.entity.Zone;
+import com.factoreal.backend.domain.zone.dto.ZoneHist;
+import com.factoreal.backend.domain.worker.dao.WorkerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

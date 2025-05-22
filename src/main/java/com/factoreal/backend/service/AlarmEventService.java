@@ -1,12 +1,13 @@
 package com.factoreal.backend.service;
 
-import com.factoreal.backend.dto.SensorKafkaDto;
-import com.factoreal.backend.entity.AbnormalLog;
-import com.factoreal.backend.kafka.strategy.alarmList.NotificationStrategy;
-import com.factoreal.backend.kafka.strategy.NotificationStrategyFactory;
-import com.factoreal.backend.kafka.strategy.enums.AlarmEventDto;
-import com.factoreal.backend.kafka.strategy.enums.RiskLevel;
-import com.factoreal.backend.kafka.strategy.enums.SensorType;
+import com.factoreal.backend.domain.zone.application.ZoneService;
+import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
+import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
+import com.factoreal.backend.global.kafka.strategy.alarmList.NotificationStrategy;
+import com.factoreal.backend.global.kafka.strategy.NotificationStrategyFactory;
+import com.factoreal.backend.global.kafka.strategy.enums.AlarmEventDto;
+import com.factoreal.backend.global.kafka.strategy.enums.RiskLevel;
+import com.factoreal.backend.global.kafka.strategy.enums.SensorType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

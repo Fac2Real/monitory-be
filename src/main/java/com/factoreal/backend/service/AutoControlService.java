@@ -1,8 +1,8 @@
 package com.factoreal.backend.service;
 
-import com.factoreal.backend.dto.SensorKafkaDto;
-import com.factoreal.backend.entity.Sensor;
-import com.factoreal.backend.repository.SensorRepository;
+import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
+import com.factoreal.backend.domain.sensor.entity.Sensor;
+import com.factoreal.backend.domain.sensor.dao.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
