@@ -1,6 +1,5 @@
 package com.factoreal.backend.controller;
 
-import com.factoreal.backend.dto.CreateWorkerRequest;
 import com.factoreal.backend.dto.WorkerDto;
 import com.factoreal.backend.dto.ZoneManagerResponseDto;
 import com.factoreal.backend.service.WorkerService;
@@ -18,18 +17,10 @@ import java.util.List;
 @RequestMapping("/api/workers")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "작업자 API", description = "작업자 조회 및 생성 API")
+@Tag(name = "작업자 API", description = "작업자 조회 API")
 public class WorkerController {
     private final WorkerService workerService;
     
-    @Operation(summary = "작업자 생성", description = "새로운 작업자를 생성하고 접근 가능한 공간들을 선택합니다.")
-    @PostMapping
-    public ResponseEntity<Void> createWorker(@RequestBody CreateWorkerRequest request) {
-        log.info("작업자 생성 요청: {}", request);
-        workerService.createWorker(request);
-        return ResponseEntity.ok().build(); // 작업자 생성 성공 시 200 응답
-    }
-
     @Operation(summary = "전체 작업자 목록 조회", description = "전체 작업자 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<List<WorkerDto>> getAllWorkers() {
