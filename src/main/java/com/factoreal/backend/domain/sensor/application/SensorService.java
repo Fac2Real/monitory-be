@@ -1,13 +1,12 @@
 package com.factoreal.backend.domain.sensor.application;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.factoreal.backend.domain.sensor.dto.request.SensorCreateRequest;
 import com.factoreal.backend.domain.sensor.dto.response.SensorInfoResponse;
 import com.factoreal.backend.domain.sensor.dto.request.SensorUpdateRequest;
-import com.factoreal.backend.global.kafka.strategy.enums.SensorType;
+import com.factoreal.backend.messaging.kafka.strategy.enums.SensorType;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

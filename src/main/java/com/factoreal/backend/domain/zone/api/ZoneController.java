@@ -2,7 +2,7 @@ package com.factoreal.backend.domain.zone.api;
 
 import java.util.List;
 
-import com.factoreal.backend.domain.abnormalLog.dto.AbnormalPagingDto;
+import com.factoreal.backend.domain.abnormalLog.dto.request.AbnormalPagingRequest;
 import com.factoreal.backend.domain.zone.dto.response.ZoneLogResponse;
 import com.factoreal.backend.domain.zone.dto.request.ZoneCreateRequest;
 import com.factoreal.backend.domain.zone.dto.request.ZoneUpdateRequest;
@@ -58,7 +58,7 @@ public class ZoneController {
             @Parameter(description = "조회할 공간 ID", required = true)
             @PathVariable String zoneId,
             @Parameter(description = "페이징 정보 (page: 페이지 번호, size: 페이지 크기)")
-            @ModelAttribute AbnormalPagingDto pagingDto) {
+            @ModelAttribute AbnormalPagingRequest pagingDto) {
         return service.findSystemLogsByZoneId(zoneId, pagingDto);
     }
 }

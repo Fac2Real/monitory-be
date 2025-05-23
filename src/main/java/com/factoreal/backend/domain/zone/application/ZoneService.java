@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.factoreal.backend.domain.abnormalLog.dao.AbnLogRepository;
-import com.factoreal.backend.domain.abnormalLog.dto.AbnormalPagingDto;
+import com.factoreal.backend.domain.abnormalLog.dto.request.AbnormalPagingRequest;
 import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
 import com.factoreal.backend.domain.equip.dto.response.EquipDetailResponse;
 import com.factoreal.backend.domain.sensor.dto.response.SensorInfoResponse;
@@ -133,7 +133,7 @@ public class ZoneService {
     }
 
     @Transactional
-    public Page<ZoneLogResponse> findSystemLogsByZoneId(String zoneId, AbnormalPagingDto pagingDto) {
+    public Page<ZoneLogResponse> findSystemLogsByZoneId(String zoneId, AbnormalPagingRequest pagingDto) {
         log.info("공간 ID: {}의 시스템 로그 조회", zoneId);
         Pageable pageable = getPageable(pagingDto);
 
@@ -154,7 +154,7 @@ public class ZoneService {
         }
     }
 
-    private Pageable getPageable(AbnormalPagingDto abnormalPagingDto){
+    private Pageable getPageable(AbnormalPagingRequest abnormalPagingDto){
         return PageRequest.of(
                 abnormalPagingDto.getPage(),
                 abnormalPagingDto.getSize()

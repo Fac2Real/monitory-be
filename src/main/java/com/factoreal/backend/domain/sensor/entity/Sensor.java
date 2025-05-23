@@ -2,7 +2,7 @@ package com.factoreal.backend.domain.sensor.entity;
 
 import com.factoreal.backend.domain.equip.entity.Equip;
 import com.factoreal.backend.domain.zone.entity.Zone;
-import com.factoreal.backend.global.kafka.strategy.enums.SensorType;
+import com.factoreal.backend.messaging.kafka.strategy.enums.SensorType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
