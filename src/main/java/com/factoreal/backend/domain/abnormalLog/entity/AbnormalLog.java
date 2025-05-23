@@ -15,13 +15,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// 이상 감지 LOG ENTITY
 public class AbnormalLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id; // ID
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "target_type", length = 50)

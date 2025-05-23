@@ -19,6 +19,7 @@ public class NotificationController {
     // 3. swagger에서 아래 api 호출
     // https://jiangxy.github.io/websocket-debug-tool/
     @PostMapping("/api/notify")
+    @Deprecated
     public ResponseEntity<String> notify(@RequestBody Map<String, String> body) {
         String message = body.get("message");
         simpMessagingTemplate.convertAndSend("/topic/notify", message);

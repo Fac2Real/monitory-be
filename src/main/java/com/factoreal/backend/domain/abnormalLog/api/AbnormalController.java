@@ -1,8 +1,8 @@
 package com.factoreal.backend.domain.abnormalLog.api;
 
-import com.factoreal.backend.domain.abnormalLog.dto.AbnormalLogDto;
-import com.factoreal.backend.domain.abnormalLog.dto.AbnormalPagingDto;
 import com.factoreal.backend.domain.abnormalLog.application.AbnormalLogService;
+import com.factoreal.backend.domain.abnormalLog.dto.request.AbnormalPagingRequest;
+import com.factoreal.backend.domain.abnormalLog.dto.response.AbnormalLogResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,27 +17,27 @@ public class AbnormalController {
 
     // 전체 로그 조회
     @GetMapping
-    public Page<AbnormalLogDto> getAllAbnormalLogs(@ModelAttribute AbnormalPagingDto pagingDto) {
+    public Page<AbnormalLogResponse> getAllAbnormalLogs(@ModelAttribute AbnormalPagingRequest pagingDto) {
         return abnormalLogService.findAllAbnormalLogs(pagingDto);
     }
 
     @GetMapping("/unread")
-    public Page<AbnormalLogDto> getAllAbnormalLogsUnRead(@ModelAttribute AbnormalPagingDto pagingDto) {
+    public Page<AbnormalLogResponse> getAllAbnormalLogsUnRead(@ModelAttribute AbnormalPagingRequest pagingDto) {
         return abnormalLogService.findAllAbnormalLogsUnRead(pagingDto);
     }
 
     // 특정 이상 유형으로 필터링
     @GetMapping("/type/{abnormalType}")
-    public Page<AbnormalLogDto> getAbnormalLogsByType(
-            @ModelAttribute AbnormalPagingDto pagingDto,
+    public Page<AbnormalLogResponse> getAbnormalLogsByType(
+            @ModelAttribute AbnormalPagingRequest pagingDto,
             @PathVariable String abnormalType) {
         return abnormalLogService.findAbnormalLogsByAbnormalType(pagingDto, abnormalType);
     }
 
     // 특정 타겟 ID로 필터링
     @GetMapping("/target/{targetType}/{targetId}")
-    public Page<AbnormalLogDto> getAbnormalLogsByTarget(
-            @ModelAttribute AbnormalPagingDto pagingDto,
+    public Page<AbnormalLogResponse> getAbnormalLogsByTarget(
+            @ModelAttribute AbnormalPagingRequest pagingDto,
             @PathVariable String targetType,
             @PathVariable String targetId) {
         return abnormalLogService.findAbnormalLogsByTargetId(pagingDto, targetType, targetId);

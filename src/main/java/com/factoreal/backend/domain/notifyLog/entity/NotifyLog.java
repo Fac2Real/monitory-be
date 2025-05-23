@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// 알림 로그 ENTITY
 public class NotifyLog {
 
     @Id

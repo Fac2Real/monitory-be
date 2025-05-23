@@ -1,8 +1,8 @@
 package com.factoreal.backend.domain.abnormalLog.application;
 
-import com.factoreal.backend.domain.abnormalLog.dto.AbnormalLogDto;
-import com.factoreal.backend.domain.abnormalLog.dto.AbnormalPagingDto;
 import com.factoreal.backend.domain.abnormalLog.dto.LogType;
+import com.factoreal.backend.domain.abnormalLog.dto.request.AbnormalPagingRequest;
+import com.factoreal.backend.domain.abnormalLog.dto.response.AbnormalLogResponse;
 import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
 import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
 import com.factoreal.backend.domain.zone.dao.ZoneRepository;
@@ -33,7 +33,6 @@ public class AbnormalLogService {
     private final ZoneRepository zoneRepository;
     private final RiskMessageProvider riskMessageProvider;
     private final ObjectMapper objectMapper;
-    private final WebSocketSender webSocketSender;
 
     // 알람 객체를 받아와서 로그 객체 생성.
     @Transactional(rollbackFor = Exception.class)
@@ -71,12 +70,12 @@ public class AbnormalLogService {
     }
 
 
-    public Page<AbnormalLogDto> findAllAbnormalLogs(AbnormalPagingDto abnormalPagingDto) {
+    public Page<AbnormalLogResponse> findAllAbnormalLogs(AbnormalPagingRequest abnormalPagingDto) {
         // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
         Pageable pageable = getPageable(abnormalPagingDto);
         Page<AbnormalLog> abnormalLogs = abnLogRepository.findAll(pageable);
         return abnormalLogs.map(abn_log ->
-                AbnormalLogDto.builder()
+                AbnormalLogResponse.builder()
                         .id(abn_log.getId())
                         .targetType(abn_log.getTargetType())
                         .targetId(abn_log.getTargetId())
@@ -89,12 +88,12 @@ public class AbnormalLogService {
         );
     }
 
-    public Page<AbnormalLogDto> findAllAbnormalLogsUnRead(AbnormalPagingDto abnormalPagingDto) {
+    public Page<AbnormalLogResponse> findAllAbnormalLogsUnRead(AbnormalPagingRequest abnormalPagingRequest) {
         // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
-        Pageable pageable = getPageable(abnormalPagingDto);
+        Pageable pageable = getPageable(abnormalPagingRequest);
         Page<AbnormalLog> abnormalLogs = abnLogRepository.findAllByIsReadIsFalse(pageable);
         return abnormalLogs.map(abn_log ->
-                AbnormalLogDto.builder()
+                AbnormalLogResponse.builder()
                         .id(abn_log.getId())
                         .targetType(abn_log.getTargetType())
                         .targetId(abn_log.getTargetId())
@@ -107,12 +106,12 @@ public class AbnormalLogService {
         );
     }
 
-    public Page<AbnormalLogDto> findAbnormalLogsByAbnormalType(AbnormalPagingDto abnormalPagingDto, String abnormalType){
+    public Page<AbnormalLogResponse> findAbnormalLogsByAbnormalType(AbnormalPagingRequest abnormalPagingRequest, String abnormalType){
         // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
-        Pageable pageable = getPageable(abnormalPagingDto);
+        Pageable pageable = getPageable(abnormalPagingRequest);
         Page<AbnormalLog> abnormalLogs = abnLogRepository.findAbnormalLogsByAbnormalType(abnormalType,pageable);
         return abnormalLogs.map(abn_log ->
-                AbnormalLogDto.builder()
+                AbnormalLogResponse.builder()
                         .id(abn_log.getId())
                         .targetType(abn_log.getTargetType())
                         .targetId(abn_log.getTargetId())
@@ -126,15 +125,15 @@ public class AbnormalLogService {
     }
 
     //
-    public Page<AbnormalLogDto> findAbnormalLogsByTargetId(AbnormalPagingDto abnormalPagingDto, String targetType, String targetId){
+    public Page<AbnormalLogResponse> findAbnormalLogsByTargetId(AbnormalPagingRequest abnormalPagingRequest, String targetType, String targetId){
         // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
-        Pageable pageable = getPageable(abnormalPagingDto);
+        Pageable pageable = getPageable(abnormalPagingRequest);
         Page<AbnormalLog> abnormalLogs = abnLogRepository.findAbnormalLogsByTargetTypeAndTargetId(
                 targetType,
                 targetId,
                 pageable);
         return abnormalLogs.map(
-                abn_log -> objectMapper.convertValue(abn_log, AbnormalLogDto.class)
+                abn_log -> objectMapper.convertValue(abn_log, AbnormalLogResponse.class)
         );
     }
 
@@ -160,10 +159,10 @@ public class AbnormalLogService {
         return count;
     }
 
-    private Pageable getPageable(AbnormalPagingDto abnormalPagingDto){
+    private Pageable getPageable(AbnormalPagingRequest abnormalPagingRequest){
         return PageRequest.of(
-                abnormalPagingDto.getPage(),
-                abnormalPagingDto.getSize()
+                abnormalPagingRequest.getPage(),
+                abnormalPagingRequest.getSize()
         );
     }
 }
