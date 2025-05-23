@@ -1,4 +1,4 @@
-package com.factoreal.backend.domain.equip.dto.request;
+package com.factoreal.backend.global.tmp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EquipUpdateDto {
-    private String equipName; // 수정할 설비명
+public class ZoneDangerDto {
+    private String zoneId;
+    private String sensorType;
+    private int level;
 }

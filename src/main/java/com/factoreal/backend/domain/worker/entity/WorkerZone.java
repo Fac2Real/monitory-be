@@ -1,6 +1,5 @@
-package com.factoreal.backend.domain.workerZone.entity;
+package com.factoreal.backend.domain.worker.entity;
 
-import com.factoreal.backend.domain.worker.entity.Worker;
 import com.factoreal.backend.domain.zone.entity.Zone;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +19,6 @@ public class WorkerZone {
     @Column(name = "manage_yn", nullable = false)
     private Boolean manageYn; // 공간담당자 여부
 
-    // 연관관계
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("workerId")
     @JoinColumn(name = "worker_id")

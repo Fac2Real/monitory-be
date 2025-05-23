@@ -7,8 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-// 설비 정보 DTO
-public class EquipDto {
+public class EquipInfoResponse {
     private String equipId;
     private String equipName;
     private String zoneName;

@@ -4,7 +4,7 @@ import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
 import com.factoreal.backend.domain.abnormalLog.dto.LogType;
 import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
 import com.factoreal.backend.domain.zone.dao.ZoneRepository;
-import com.factoreal.backend.domain.zone.dto.SystemLogDto;
+import com.factoreal.backend.global.tmp.SystemLogDto;
 import com.factoreal.backend.global.sender.WebSocketSender;
 import com.factoreal.backend.domain.zone.application.ZoneService;
 import com.factoreal.backend.domain.abnormalLog.application.AbnormalLogService;

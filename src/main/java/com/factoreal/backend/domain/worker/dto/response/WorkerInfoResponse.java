@@ -1,4 +1,4 @@
-package com.factoreal.backend.domain.worker.dto;
+package com.factoreal.backend.domain.worker.dto.response;
 
 import com.factoreal.backend.domain.worker.entity.Worker;
 import lombok.AllArgsConstructor;
@@ -10,16 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WorkerDto {
+public class WorkerInfoResponse {
     private String workerId;
     private String name;
     private String phoneNumber;
     private String email;
-    private Boolean isManager; // 관리자 여부
+    private Boolean isManager;
 
-    // Entity -> DTO 변환
-    public static WorkerDto fromEntity(Worker worker, Boolean isManager) {
-        return WorkerDto.builder()
+    public static WorkerInfoResponse from(Worker worker, Boolean isManager) {
+        return WorkerInfoResponse.builder()
                 .workerId(worker.getWorkerId())
                 .name(worker.getName())
                 .phoneNumber(worker.getPhoneNumber())

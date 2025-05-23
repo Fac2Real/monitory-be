@@ -1,4 +1,4 @@
-package com.factoreal.backend.domain.zone.dto;
+package com.factoreal.backend.domain.worker.dto.response;
 
 import com.factoreal.backend.domain.worker.entity.Worker;
 import com.factoreal.backend.domain.zone.entity.Zone;
@@ -11,17 +11,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-// 공간 담당자 정보 조회 시 사용되는 DTO (BE -> FE)
-public class ZoneManagerResponseDto {
-    private String workerId;          // 작업자 ID
-    private String name;              // 작업자 이름
-    private String phoneNumber;       // 연락처
-    private String email;             // 이메일
-    private String currentZoneId;     // 현재 위치한 공간 ID
-    private String currentZoneName;   // 현재 위치한 공간 이름
+public class ZoneManagerResponse {
+    private String workerId;
+    private String name;
+    private String phoneNumber;
+    private String email;
+    private String currentZoneId;
+    private String currentZoneName;
 
-    public static ZoneManagerResponseDto fromEntity(Worker worker, Zone currentZone) {
-        return ZoneManagerResponseDto.builder()
+    public static ZoneManagerResponse from(Worker worker, Zone currentZone) {
+        return ZoneManagerResponse.builder()
                 .workerId(worker.getWorkerId())
                 .name(worker.getName())
                 .phoneNumber(worker.getPhoneNumber())

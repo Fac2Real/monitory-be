@@ -1,7 +1,7 @@
-package com.factoreal.backend.domain.workerZone.dao;
+package com.factoreal.backend.domain.worker.dao;
 
-import com.factoreal.backend.domain.workerZone.entity.WorkerZone;
-import com.factoreal.backend.domain.workerZone.entity.WorkerZoneId;
+import com.factoreal.backend.domain.worker.entity.WorkerZone;
+import com.factoreal.backend.domain.worker.entity.WorkerZoneId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

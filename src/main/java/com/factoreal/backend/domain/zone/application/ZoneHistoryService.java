@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -60,21 +59,5 @@ public class ZoneHistoryService {
         log.info("작업자 {} 위치 변경: {} -> {}", workerId, 
                 currentLocation != null ? currentLocation.getZone().getZoneId() : "없음", 
                 zoneId);
-    }
-
-    /**
-     * 특정 공간에 현재 들어가있는 작업자 리스트 조회
-     */
-    @Transactional(readOnly = true)
-    public List<ZoneHist> getCurrentWorkersByZoneId(String zoneId) {
-        return zoneHistRepository.findByZone_ZoneIdAndExistFlag(zoneId, 1); // 해당 공간의 existFlag가 1인 모든 작업자 리스트
-    }
-
-    /**
-     * 특정 작업자의 현재 위치 조회
-     */
-    @Transactional(readOnly = true)
-    public ZoneHist getCurrentWorkerLocation(String workerId) {
-        return zoneHistRepository.findByWorker_WorkerIdAndExistFlag(workerId, 1);
     }
 }

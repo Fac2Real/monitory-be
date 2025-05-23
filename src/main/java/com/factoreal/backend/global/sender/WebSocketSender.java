@@ -1,7 +1,7 @@
 package com.factoreal.backend.global.sender;
 
-import com.factoreal.backend.domain.zone.dto.SystemLogDto;
-import com.factoreal.backend.domain.zone.dto.ZoneDangerDto;
+import com.factoreal.backend.global.tmp.SystemLogDto;
+import com.factoreal.backend.global.tmp.ZoneDangerDto;
 import com.factoreal.backend.global.kafka.strategy.enums.AlarmEventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

@@ -1,9 +1,9 @@
 package com.factoreal.backend.domain.equip.api;
 
 import com.factoreal.backend.domain.equip.dto.request.EquipCreateRequest;
-import com.factoreal.backend.domain.equip.dto.response.EquipDto;
-import com.factoreal.backend.domain.equip.dto.request.EquipUpdateDto;
 import com.factoreal.backend.domain.equip.application.EquipService;
+import com.factoreal.backend.domain.equip.dto.request.EquipUpdateRequest;
+import com.factoreal.backend.domain.equip.dto.response.EquipInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,25 +23,22 @@ public class EquipController {
 
     @PostMapping
     @Operation(summary = "설비 등록", description = "UI로부터 설비명과 공간명을 입력받아 고유 ID를 생성하여 설비 정보를 등록합니다.")
-    public ResponseEntity<EquipDto> createEquip(@Valid @RequestBody EquipCreateRequest req) {
-        EquipDto created = service.createEquip(req);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public EquipInfoResponse createEquip(@Valid @RequestBody EquipCreateRequest equipCreateRequest) {
+        return service.createEquip(equipCreateRequest);
     }
 
     @PostMapping("/{equipId}")
     @Operation(summary = "설비 정보 수정", description = "기존 설비의 이름을 수정합니다.")
-    public ResponseEntity<EquipDto> updateEquip(
+    public EquipInfoResponse updateEquip(
             @PathVariable String equipId,
-            @RequestBody EquipUpdateDto dto) {
-
-        EquipDto updated = service.updateEquip(equipId, dto);
-        return ResponseEntity.ok(updated);
+            @RequestBody EquipUpdateRequest dto) {
+        return service.updateEquip(equipId, dto);
     }
 
     @GetMapping
     @Operation(summary = "설비 목록 조회", description = "등록된 모든 설비 정보를 조회합니다.")
-    public ResponseEntity<List<EquipDto>> listEquips() {
-        return ResponseEntity.ok(service.getAllEquips());
+    public List<EquipInfoResponse> listEquips() {
+        return service.getAllEquips();
     }
 
 //    // 공간별로 구분된 설비 조회

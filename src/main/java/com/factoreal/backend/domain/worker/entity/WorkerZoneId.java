@@ -1,4 +1,4 @@
-package com.factoreal.backend.domain.workerZone.entity;
+package com.factoreal.backend.domain.worker.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

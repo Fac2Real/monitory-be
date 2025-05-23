@@ -1,4 +1,4 @@
-package com.factoreal.backend.domain.zone.dto;
+package com.factoreal.backend.global.tmp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
