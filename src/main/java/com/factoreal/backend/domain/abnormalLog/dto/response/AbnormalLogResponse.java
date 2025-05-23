@@ -1,6 +1,6 @@
 package com.factoreal.backend.domain.abnormalLog.dto.response;
 
-import com.factoreal.backend.domain.abnormalLog.dto.LogType;
+import com.factoreal.backend.domain.abnormalLog.dto.TargetType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class AbnormalLogResponse {
     private Long id;
-    private LogType targetType;
+    private TargetType targetType;
     private String targetId;
     private String abnormalType;
     private Double abnVal;

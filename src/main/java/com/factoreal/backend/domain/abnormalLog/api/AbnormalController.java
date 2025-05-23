@@ -49,7 +49,7 @@ public class AbnormalController {
         boolean success = abnormalLogService.readCheck(abnormalId);
         return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
-
+    // 웹 페이지 첫 렌더링 시 호출되는 api
     // 읽지 않은 알람 개수 반환 -> websocket으로 전부 보내주기
     @GetMapping("/unread-count")
     public ResponseEntity<Long> getUnreadAlarmCount() {

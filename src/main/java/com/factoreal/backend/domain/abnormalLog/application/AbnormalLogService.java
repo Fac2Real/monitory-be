@@ -1,16 +1,20 @@
 package com.factoreal.backend.domain.abnormalLog.application;
 
-import com.factoreal.backend.domain.abnormalLog.dto.LogType;
+import com.factoreal.backend.domain.abnormalLog.dao.AbnLogRepository;
+import com.factoreal.backend.domain.abnormalLog.dto.TargetType;
 import com.factoreal.backend.domain.abnormalLog.dto.request.AbnormalPagingRequest;
 import com.factoreal.backend.domain.abnormalLog.dto.response.AbnormalLogResponse;
-import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
 import com.factoreal.backend.domain.abnormalLog.entity.AbnormalLog;
-import com.factoreal.backend.domain.zone.dao.ZoneRepository;
+import com.factoreal.backend.domain.sensor.dto.SensorKafkaDto;
+import com.factoreal.backend.domain.zone.application.ZoneHistoryService;
+import com.factoreal.backend.domain.zone.application.ZoneService;
 import com.factoreal.backend.domain.zone.entity.Zone;
-import com.factoreal.backend.domain.abnormalLog.dao.AbnLogRepository;
+import com.factoreal.backend.domain.zone.entity.ZoneHist;
+import com.factoreal.backend.messaging.kafka.dto.WearableKafkaDto;
 import com.factoreal.backend.messaging.kafka.strategy.alarmMessage.RiskMessageProvider;
 import com.factoreal.backend.messaging.kafka.strategy.enums.RiskLevel;
 import com.factoreal.backend.messaging.kafka.strategy.enums.SensorType;
+import com.factoreal.backend.messaging.kafka.strategy.enums.WearableDataType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,22 +33,28 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AbnormalLogService {
     private final AbnLogRepository abnLogRepository;
-    private final ZoneRepository zoneRepository;
+    private final ZoneService zoneService;
     private final RiskMessageProvider riskMessageProvider;
     private final ObjectMapper objectMapper;
+    private final ZoneHistoryService zoneHistoryService;
 
-    // 알람 객체를 받아와서 로그 객체 생성.
+    /**
+     * 센서 데이터 기반의 알람 로그 생성.
+     * @param sensorKafkaDto kafka에서 EQUIPMENT 및 ENVIRONMENT 토픽으로 들어오는 DTO
+     * @param sensorType 센서 종류: current, dust, temp, humid, vibration, voc
+     * @param riskLevel 위험 레벨: 시스템 로그에 저장할 메세지를 조회하기 위해 필요(센서별 위험도에 해당되는 메세지)
+     * @param targetType 타겟 종류 : Sensor(공간), Worker(작업자), Equip(설비-머신러닝)
+     * @return
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
-    public AbnormalLog saveAbnormalLogFromKafkaDto(
-                                                        SensorKafkaDto sensorKafkaDto,
-                                                        SensorType sensorType,
-                                                        RiskLevel riskLevel,
-                                                        LogType targetType
-                                                ) throws Exception{
-
-
-        Zone zone = zoneRepository.findByZoneId(sensorKafkaDto.getZoneId());
-
+    public AbnormalLog saveAbnormalLogFromSensorKafkaDto(
+            SensorKafkaDto sensorKafkaDto,
+            SensorType sensorType,
+            RiskLevel riskLevel,
+            TargetType targetType
+    ) throws Exception{
+        Zone zone = zoneService.findByZoneId(sensorKafkaDto.getZoneId());
 
         if (zone == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 공간 ID: " + sensorKafkaDto.getZoneId());
@@ -58,7 +68,7 @@ public class AbnormalLogService {
         AbnormalLog abnormalLog = AbnormalLog.builder()
                 .targetId(sensorKafkaDto.getSensorId())
                 .targetType(targetType)
-                .abnormalType(riskMessageProvider.getMessage(sensorType,riskLevel))
+                .abnormalType(riskMessageProvider.getRiskMessageBySensor(sensorType,riskLevel))
                 .abnVal(sensorKafkaDto.getVal())
                 .zone(zone)
                 .detectedAt(LocalDateTime.parse(sensorKafkaDto.getTime()))
@@ -68,6 +78,42 @@ public class AbnormalLogService {
         return abnLogRepository.save(abnormalLog);
     }
 
+    /**
+     * 센서 데이터 기반의 알람 로그 생성.
+     * @param wearableKafkaDto kafka에서 WEARABLE 토픽으로 들어오는 DTO
+     * @param wearableDataType 생체 데이터 종류: 현재는 heartRate 만 보내는 중(확장성 고려해서 해당 객체 사용)
+     * @param riskLevel 위험 레벨: 시스템 로그에 저장할 메세지를 조회하기 위해 필요(생체 데이터 별 위험도에 해당되는 메세지)
+     * @param targetType 타겟 종류 : Sensor(공간), Worker(작업자), Equip(설비-머신러닝)
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AbnormalLog saveAbnormalLogFromWearableKafkaDto(
+            WearableKafkaDto wearableKafkaDto,
+            WearableDataType wearableDataType,
+            RiskLevel riskLevel,
+            TargetType targetType
+    ){
+        // workerId에 해당되는 사람이 제일 최근에 있던 공간 조회
+        ZoneHist zonehist = zoneHistoryService.
+                findByWorker_WorkerIdAndExistFlag(wearableKafkaDto.getWorkerId(), 1);
+        Zone zone;
+        if (zonehist == null){
+            zone = zoneService.findByZoneId("00000000000000-000");
+        }else{
+            zone = zonehist.getZone();
+        }
+
+        AbnormalLog abnormalLog = AbnormalLog.builder()
+                .targetId(wearableKafkaDto.getWearableDeviceId())
+                .targetType(targetType)
+                .abnormalType(riskMessageProvider.getRiskMessageByWearble(wearableDataType,riskLevel))
+                .abnVal(Double.valueOf(wearableKafkaDto.getVal()))
+                .detectedAt(LocalDateTime.parse(wearableKafkaDto.getTime()))
+                .zone(zone)
+                .isRead(false)
+                .build();
+       return abnLogRepository.save(abnormalLog);
+    }
 
     public Page<AbnormalLogResponse> findAllAbnormalLogs(AbnormalPagingRequest abnormalPagingDto) {
         // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
@@ -90,7 +136,7 @@ public class AbnormalLogService {
     public Page<AbnormalLogResponse> findAllAbnormalLogsUnRead(AbnormalPagingRequest abnormalPagingRequest) {
         // 한번에 DB전체를 주는 것이 아닌 구간 나눠서 전달하기 위함
         Pageable pageable = getPageable(abnormalPagingRequest);
-        Page<AbnormalLog> abnormalLogs = abnLogRepository.findAllByIsReadIsFalse(pageable);
+        Page<AbnormalLog> abnormalLogs = abnLogRepository.findAllByIsReadIsFalseOrderByDetectedAtDesc(pageable);
         return abnormalLogs.map(abn_log ->
                 AbnormalLogResponse.builder()
                         .id(abn_log.getId())

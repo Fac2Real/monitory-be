@@ -14,7 +14,7 @@ public class AlarmEventDto {
     private Long eventId;           // 알람 이벤트 고유 ID (추적용) -> BE에서 할당
     private String zoneId;
     private String equipId;
-    private String sensorId;
+    private String sensorId;        // 센서 혹은 웨어러블Id
     private String sensorType;       // 알람 종류 (예: "HIGH_HEART_RATE", "LOW_BATTERY", "SERVER_DOWN") - 분류 및 라우팅에 사용
     private double sensorValue; // 이상치 값
     private RiskLevel riskLevel; // 알람 심각도 (예: CRITICAL, WARNING, INFO) - 채널 선택, 표현 방식 결정에 사용
