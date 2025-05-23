@@ -1,10 +1,12 @@
 package com.factoreal.backend.service;
 
-import com.factoreal.backend.dto.WorkerDto;
-import com.factoreal.backend.entity.Worker;
-import com.factoreal.backend.entity.Zone;
-import com.factoreal.backend.entity.ZoneHist;
-import com.factoreal.backend.repository.WorkerRepository;
+import com.factoreal.backend.domain.worker.application.WorkerService;
+import com.factoreal.backend.domain.worker.dto.response.WorkerInfoResponse;
+import com.factoreal.backend.domain.worker.entity.Worker;
+import com.factoreal.backend.domain.zone.dao.ZoneHistoryRepository;
+import com.factoreal.backend.domain.zone.entity.Zone;
+import com.factoreal.backend.domain.zone.entity.ZoneHist;
+import com.factoreal.backend.domain.worker.dao.WorkerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,7 +27,7 @@ public class WorkerServiceTest {
     private WorkerRepository workerRepository;
     
     @Mock
-    private WorkerLocationService workerLocationService;
+    private ZoneHistoryRepository zoneHistoryRepository;
     
     @InjectMocks
     private WorkerService workerService;
@@ -77,7 +79,7 @@ public class WorkerServiceTest {
         when(workerRepository.findAll()).thenReturn(Arrays.asList(worker1, worker2));
         
         // 서비스 메소드 호출
-        List<WorkerDto> result = workerService.getAllWorkers();
+        List<WorkerInfoResponse> result = workerService.getAllWorkers();
         
         // 결과 검증
         assertNotNull(result);
@@ -101,10 +103,10 @@ public class WorkerServiceTest {
     @Test
     void testGetWorkersByZoneId() {
         // Mock 설정
-        when(workerLocationService.getCurrentWorkersByZoneId("zone1")).thenReturn(Arrays.asList(zoneHist1));
+        when(zoneHistoryRepository.findByZone_ZoneIdAndExistFlag("zone1", 1)).thenReturn(Arrays.asList(zoneHist1));
         
         // 테스트 실행
-        List<WorkerDto> workers = workerService.getWorkersByZoneId("zone1");
+        List<WorkerInfoResponse> workers = workerService.getWorkersByZoneId("zone1");
         
         // 검증
         assertEquals(1, workers.size());
