@@ -90,7 +90,8 @@ public class SensorEventProcessor {
     }
 
     // 공간에 위험도 분기 로직
-    // Todo : Flink에서 적용으로 변경되어 삭제 예정
+    // Flink에서 적용으로 변경되어 사용안함
+    @Deprecated
     private int getDangerLevel(String sensorType, double val) {
         switch (sensorType.toLowerCase()) {
             case "temp": return val > 40 || val < -35 ? 2 : (val > 30 || val < 25 ? 1 : 0);

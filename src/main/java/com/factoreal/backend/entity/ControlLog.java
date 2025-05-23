@@ -23,7 +23,7 @@ public class ControlLog {
     private String controlType;
 
     @Column(name = "control_val")
-    private Integer controlVal;
+    private Double controlVal;
 
     @Column(name = "control_stat")
     private Integer controlStat;
