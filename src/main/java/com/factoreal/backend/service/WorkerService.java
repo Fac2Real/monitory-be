@@ -1,13 +1,16 @@
 package com.factoreal.backend.service;
 
+import com.factoreal.backend.dto.CreateWorkerRequest;
 import com.factoreal.backend.dto.WorkerDto;
 import com.factoreal.backend.dto.ZoneManagerResponseDto;
 import com.factoreal.backend.entity.Worker;
 import com.factoreal.backend.entity.WorkerZone;
+import com.factoreal.backend.entity.WorkerZoneId;
 import com.factoreal.backend.entity.Zone;
 import com.factoreal.backend.entity.ZoneHist;
 import com.factoreal.backend.repository.WorkerRepository;
 import com.factoreal.backend.repository.WorkerZoneRepository;
+import com.factoreal.backend.repository.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,13 +26,18 @@ public class WorkerService {
     private final WorkerRepository workerRepository;
     private final WorkerLocationService workerLocationService;
     private final WorkerZoneRepository workerZoneRepository;
+    private final ZoneRepository zoneRepository;
 
     @Transactional(readOnly = true)
     public List<WorkerDto> getAllWorkers() {
         log.info("전체 작업자 목록 조회");
         List<Worker> workers = workerRepository.findAll();
         return workers.stream()
-                .map(worker -> WorkerDto.fromEntity(worker, false))
+                .map(worker -> {
+                    // 해당 작업자가 어떤 공간의 담당자인지 확인
+                    boolean isManager = workerZoneRepository.findByWorkerWorkerIdAndManageYnIsTrue(worker.getWorkerId()).isPresent();
+                    return WorkerDto.fromEntity(worker, isManager);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -71,19 +79,40 @@ public class WorkerService {
         // 4. DTO 변환 및 반환
         return ZoneManagerResponseDto.fromEntity(manager, currentZone);
     }
-}
 
-// TODO. 수정되어야 할 로직. 현재는 WorkerZone 테이블에서 공간id로 필터링 되는 모든 작업자를 끌고왔는데,
-// 사실 현재 그 공간에서 실제로 작업하고 있는, 즉 들어
-// public List<WorkerDto> getWorkersByZoneId(String zoneId) {
-//     log.info("공간 ID: {}의 작업자 목록 조회", zoneId);
-//     List<WorkerZone> workerZones = workerZoneRepository.findByZoneZoneId(zoneId);
-    
-//     return workerZones.stream()
-//             .map(workerZone -> {
-//                 Worker worker = workerZone.getWorker();
-//                 Boolean isManager = workerZone.getManageYn();
-//                 return WorkerDto.fromEntity(worker, isManager);
-//             })
-//             .collect(Collectors.toList());
-// }
+    /**
+     * 작업자 생성 및 출입 가능 공간 설정
+     */
+    @Transactional
+    public void createWorker(CreateWorkerRequest request) {
+        log.info("작업자 생성 요청: {}", request);
+        
+        // 1. 작업자 정보 저장
+        Worker worker = Worker.builder()
+                .workerId(request.getWorkerId())
+                .name(request.getName())
+                .phoneNumber(request.getPhoneNumber())
+                .email(request.getEmail())
+                .build();
+        
+        workerRepository.save(worker); // 작업자 정보 저장
+        
+        // 2. 각 공간명으로 Zone 조회 및 WorkerZone 생성
+        for (String zoneName : request.getZoneNames()) {
+            Zone zone = zoneRepository.findByZoneName(zoneName)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 공간명입니다: " + zoneName));
+            
+            // WorkerZone 생성 (기본적으로 관리자 권한은 없음)
+            WorkerZone workerZone = WorkerZone.builder()
+                    .id(new WorkerZoneId(worker.getWorkerId(), zone.getZoneId())) // 복합키 생성
+                    .worker(worker)
+                    .zone(zone)
+                    .manageYn(false) // 담당자 권한은 없음이 default
+                    .build();
+            
+            workerZoneRepository.save(workerZone); // WorkerZone 저장
+        }
+        
+        log.info("작업자 생성 완료 - workerId: {}", worker.getWorkerId());
+    }
+}

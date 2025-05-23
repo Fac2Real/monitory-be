@@ -5,6 +5,7 @@ import com.factoreal.backend.entity.Worker;
 import com.factoreal.backend.entity.Zone;
 import com.factoreal.backend.entity.ZoneHist;
 import com.factoreal.backend.repository.WorkerRepository;
+import com.factoreal.backend.repository.WorkerZoneRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,10 +15,12 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyString;
 
 public class WorkerServiceTest {
 
@@ -26,6 +29,9 @@ public class WorkerServiceTest {
     
     @Mock
     private WorkerLocationService workerLocationService;
+    
+    @Mock
+    private WorkerZoneRepository workerZoneRepository;
     
     @InjectMocks
     private WorkerService workerService;
@@ -75,6 +81,10 @@ public class WorkerServiceTest {
     public void testGetAllWorkers() {
         // Mock 설정
         when(workerRepository.findAll()).thenReturn(Arrays.asList(worker1, worker2));
+        
+        // WorkerZoneRepository mock 설정 추가
+        when(workerZoneRepository.findByWorkerWorkerIdAndManageYnIsTrue(anyString()))
+                .thenReturn(Optional.empty()); // 모든 작업자가 관리자가 아닌 것으로 설정
         
         // 서비스 메소드 호출
         List<WorkerDto> result = workerService.getAllWorkers();
