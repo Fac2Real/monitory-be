@@ -46,7 +46,7 @@ public class WorkerController {
         return ResponseEntity.ok(zoneWorkers);
     }
 
-    @Operation(summary = "공간 담당자 정보 조회", 
+    @Operation(summary = "공간 담당자와 담당자의 현재 위치정보 조회", 
               description = "공간 ID를 기반으로 해당 공간의 담당자와 현재 위치 정보를 조회합니다.")
     @GetMapping("/zone/{zoneId}/manager")
     public ResponseEntity<ZoneManagerResponseDto> getZoneManager(@PathVariable String zoneId) {
