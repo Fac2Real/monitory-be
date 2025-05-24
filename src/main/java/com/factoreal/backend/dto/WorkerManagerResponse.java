@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 // 공간 담당자 정보 응답 DTO (BE -> FE)
 // - 담당자 후보 목록 조회
-// - 담당자 조회
+// - 담당자 정보 조회
 public class WorkerManagerResponse {
     private String workerId; // 직원 아이디
     private String name; // 직원 이름
