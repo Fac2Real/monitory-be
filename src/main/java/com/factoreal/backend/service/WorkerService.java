@@ -2,6 +2,7 @@ package com.factoreal.backend.service;
 
 import com.factoreal.backend.dto.CreateWorkerRequest;
 import com.factoreal.backend.dto.WorkerDto;
+import com.factoreal.backend.dto.WorkerDetailResponse;
 import com.factoreal.backend.dto.ZoneManagerResponseDto;
 import com.factoreal.backend.entity.Worker;
 import com.factoreal.backend.entity.WorkerZone;
@@ -29,14 +30,30 @@ public class WorkerService {
     private final ZoneRepository zoneRepository;
 
     @Transactional(readOnly = true)
-    public List<WorkerDto> getAllWorkers() {
+    public List<WorkerDetailResponse> getAllWorkers() {
         log.info("전체 작업자 목록 조회");
         List<Worker> workers = workerRepository.findAll();
         return workers.stream()
                 .map(worker -> {
                     // 해당 작업자가 어떤 공간의 담당자인지 확인
                     boolean isManager = workerZoneRepository.findByWorkerWorkerIdAndManageYnIsTrue(worker.getWorkerId()).isPresent();
-                    return WorkerDto.fromEntity(worker, isManager);
+                    
+                    // 작업자의 현재 위치 정보 조회
+                    ZoneHist currentLocation = workerLocationService.getCurrentWorkerLocation(worker.getWorkerId());
+                    
+                    // 작업자 상태와 위치 정보 초기 설정
+                    // TODO: 작업자 상태 추가 필요
+                    String status = "Stable";
+                    String currentZoneId = null;
+                    String currentZoneName = null;
+                    
+                    if (currentLocation != null) {
+                        Zone currentZone = currentLocation.getZone();
+                        currentZoneId = currentZone.getZoneId();
+                        currentZoneName = currentZone.getZoneName();
+                    }
+                    
+                    return WorkerDetailResponse.fromEntity(worker, isManager, status, currentZoneId, currentZoneName);
                 })
                 .collect(Collectors.toList());
     }

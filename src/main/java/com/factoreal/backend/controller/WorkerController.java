@@ -2,6 +2,7 @@ package com.factoreal.backend.controller;
 
 import com.factoreal.backend.dto.CreateWorkerRequest;
 import com.factoreal.backend.dto.WorkerDto;
+import com.factoreal.backend.dto.WorkerDetailResponse;
 import com.factoreal.backend.dto.ZoneManagerResponseDto;
 import com.factoreal.backend.service.WorkerService;
 
@@ -30,11 +31,11 @@ public class WorkerController {
         return ResponseEntity.ok().build(); // 작업자 생성 성공 시 200 응답
     }
 
-    @Operation(summary = "전체 작업자 목록 조회", description = "전체 작업자 목록을 조회합니다.")
+    @Operation(summary = "전체 작업자 목록 조회", description = "전체 작업자 목록과 각 작업자의 상태 및 위치 정보를 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<WorkerDto>> getAllWorkers() {
+    public ResponseEntity<List<WorkerDetailResponse>> getAllWorkers() {
         log.info("전체 작업자 목록 조회 요청");
-        List<WorkerDto> workers = workerService.getAllWorkers();
+        List<WorkerDetailResponse> workers = workerService.getAllWorkers();
         return ResponseEntity.ok(workers);
     }
     
