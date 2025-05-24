@@ -68,8 +68,9 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 
-    // WebSocket
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // firebase cloud messaging(FCM)
+    // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
+    implementation("com.google.firebase:firebase-admin:9.4.3")
 }
 
 tasks.named('test') {
